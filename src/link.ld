@@ -1,5 +1,5 @@
 OUTPUT_FORMAT("binary")
-ENTRY(start)
+ENTRY(__start)
 phys = 0x00100000;
 SECTIONS {
     .text phys : AT(phys) {
