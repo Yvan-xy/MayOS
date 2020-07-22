@@ -1,0 +1,28 @@
+#floppya: 1_44=/dev/fd0, status=inserted
+cpu: model=core2_penryn_t9600, count=1, ips=50000000, reset_on_triple_fault=1, ignore_bad_msrs=1, msrs="msrs.def"
+cpu: cpuid_limit_winnt=0
+
+memory: guest=512, host=256
+romimage: file=$BXSHARE/BIOS-bochs-latest, options=fastboot
+vgaromimage: file=$BXSHARE/VGABIOS-lgpl-latest
+
+mouse: enabled=0
+pci: enabled=1, chipset=i440fx
+private_colormap: enabled=0
+
+ata0: enabled=1, ioaddr1=0x1f0, ioaddr2=0x3f0, irq=14
+
+ata0-master: type=disk, path="hd.img", mode=flat, cylinders=121, heads=16, spt=63
+
+boot: disk
+
+#floppy_bootsig_check: disabled=0
+
+log: bochs.log
+
+#panic: action=ask
+#error: action=report
+#info: action=report
+#debug: action=ignore, pci=report 
+#debugger_log: -
+#parport1: enabled=1, file="parport.out"
