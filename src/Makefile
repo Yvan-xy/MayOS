@@ -12,7 +12,7 @@ all: kernel.bin
 
 
 kernel.bin: $(OBJECTS)
-	$(LD) -T link.ld -o kernel.bin start.o main.o scrn.o
+	$(LD) -T link.ld -o ../bin/kernel.bin start.o main.o scrn.o
 
 clean:
 	rm *.o

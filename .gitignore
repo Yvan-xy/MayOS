@@ -6,3 +6,6 @@
 
 #log
 bochs.log
+
+#bin
+./bin
