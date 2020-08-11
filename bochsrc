@@ -1,4 +1,3 @@
-#floppya: 1_44=/dev/fd0, status=inserted
 cpu: model=core2_penryn_t9600, count=1, ips=50000000, reset_on_triple_fault=1, ignore_bad_msrs=1, msrs="msrs.def"
 cpu: cpuid_limit_winnt=0
 
@@ -16,13 +15,7 @@ ata0-master: type=disk, path="hd.img", mode=flat, cylinders=121, heads=16, spt=6
 
 boot: disk
 
-#floppy_bootsig_check: disabled=0
+megs: 32
 
 log: bochs.log
 
-#panic: action=ask
-#error: action=report
-#info: action=report
-#debug: action=ignore, pci=report 
-#debugger_log: -
-#parport1: enabled=1, file="parport.out"
