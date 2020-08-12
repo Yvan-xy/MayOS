@@ -1,50 +1,51 @@
 #include <system.h>
-
-unsigned char *memcpy(unsigned char *dest, const unsigned char *src,
-                      int count) {
-  const unsigned char *sp = (const unsigned char *)src;
-  unsigned char *dp = (unsigned char *)dest;
-  for (; count != 0; count--)
-    *dp++ = *sp++;
-  return dest;
+unsigned char *memcpy(unsigned char *dest, const unsigned char *src, int count)
+{
+    const char *sp = (const char *)src;
+    char *dp = (char *)dest;
+    for(; count != 0; count--) *dp++ = *sp++;
+    return dest;
 }
 
-unsigned char *memset(unsigned char *dest, unsigned char val, int count) {
-  unsigned char *dp = (unsigned char *)dest;
-  for (; count != 0; count--)
-    *dp++ = val;
-  return dest;
+unsigned char *memset(unsigned char *dest, unsigned char val, int count)
+{
+    char *temp = (char *)dest;
+    for( ; count != 0; count--) *temp++ = val;
+    return dest;
 }
 
-unsigned short *memsetw(unsigned short *dest, unsigned short val, int count) {
-  unsigned short *dp = (unsigned short *)dest;
-  for (; count != 0; count--)
-    *dp++ = val;
-  return dest;
+unsigned short *memsetw(unsigned short *dest, unsigned short val, int count)
+{
+    unsigned short *temp = (unsigned short *)dest;
+    for( ; count != 0; count--) *temp++ = val;
+    return dest;
 }
 
-int strlen(const char *str) {
-  char *tmp = (const char *)str;
-  int count = 0;
-  while (*tmp != '\0') {
-    count++;
-    tmp++;
-  }
+int strlen(const char *str)
+{
+    int retval;
+    for(retval = 0; *str != '\0'; str++) retval++;
+    return retval;
 }
 
-unsigned char inportb(unsigned short _port) {
-  unsigned char rv;
-  __asm__ __volatile__("inb %1, %0" : "=a"(rv) : "dN"(_port));
-  return rv;
+unsigned char inportb (unsigned short _port)
+{
+    unsigned char rv;
+    __asm__ __volatile__ ("inb %1, %0" : "=a" (rv) : "dN" (_port));
+    return rv;
 }
 
-void outportb(unsigned short _port, unsigned char _data) {
-  __asm__ __volatile__("outb %1, %0" : : "dN"(_port), "a"(_data));
+void outportb (unsigned short _port, unsigned char _data)
+{
+    __asm__ __volatile__ ("outb %1, %0" : : "dN" (_port), "a" (_data));
 }
 
-void main() {
-  init_video();
-  puts("Hello world");
-  for (;;) {
-  };
+void main()
+{
+    init_video();
+    puts("MayOS\n");
+    settextcolor(CYAN, BLACK);
+    puts("Loader kernel success!");
+
+    for (;;);
 }

@@ -148,7 +148,149 @@ p_mode_start:
 
     mov byte [gs:160], 'P'
     
+; ------- Load Kernel Bin --------
+    mov eax, KERNEL_START_SECTOR              ; Sector of kernel bin
+    mov ebx, KERNEL_ENTRY_POINT           ; Load kernel to 0xc0001500
+    mov ecx, 200
+    call rd_disk_m32
+
+; ======= Enable Virtual Memory =======
+    call setup_page                           ; set virtual page
+    sgdt [gdt_ptr]                            ; save gdt_ptr
+
+    mov ebx, [gdt_ptr + 2]
+    or dword [ebx + 0x18 + 4], 0xc0000000
+    add dword [gdt_ptr + 2], 0xc0000000
+    add esp, 0xc0000000
+
+    mov eax, PAGE_DIR_TABLE_POS
+    mov cr3, eax
+
+    mov eax, cr0
+    or eax, 0x80000000
+    mov cr0, eax
+
+    lgdt [gdt_ptr]
+
+    mov byte [gs:160] , 'V' 
+
+    jmp SELECTOR_CODE:enter_kernel
+
+
     jmp $
+
+enter_kernel:
+    jmp KERNEL_ENTRY
+
+; -------------- create PDT &PTE -------------
+setup_page:
+
+; clear directory first
+    mov ecx, 4096
+    xor esi, esi
+.clear_page_dir:
+    mov byte [PAGE_DIR_TABLE_POS + esi], 0
+    inc esi
+    loop .clear_page_dir
+
+; create (first & last) PDE
+.create_pdt:
+    mov eax,PAGE_DIR_TABLE_POS
+    add eax,0x1000
+    mov ebx,eax
+    or eax, PG_US_U | PG_RW_W | PG_P
+    mov [PAGE_DIR_TABLE_POS + 0x0], eax         ; first PDE
+    mov [PAGE_DIR_TABLE_POS + 0xc00], eax       ; 0xc00 means 768th PDE, indicating 0xc0000000~ mem 
+    sub eax, 0x1000
+    mov [PAGE_DIR_TABLE_POS +  4092], eax       ; last PDE point to PDE start addr
+
+; create PTE
+    mov ecx, 256
+    xor esi,esi
+    mov edx, PG_US_U | PG_RW_W | PG_P
+.create_pte:
+    mov [ebx+esi*4],edx                         ; ebx:0x101000, write each PTE
+    add edx,4096                                ; each PTE control 4K mem
+    inc esi
+    loop .create_pte
+
+; create kernel's other PDE
+    mov eax, PAGE_DIR_TABLE_POS
+    add eax,0x2000  ; second PDE addr
+    or eax,PG_US_U | PG_RW_W | PG_P
+    mov ebx, PAGE_DIR_TABLE_POS
+    mov ecx,254     ; 769~1022th PDE
+    mov esi,769
+.create_kernel_pde:
+    mov [ebx+esi*4], eax
+    inc esi
+    add eax, 0x1000
+    loop .create_kernel_pde
+    ret 
+
+
+;-------------------read disk in x86 mode---------------
+; eax: LBA sector index
+; ebx: target mem addr
+; ecx: number of sector to read     ;only use cl
+;-------------------------------------------------------
+rd_disk_m32:
+
+    mov esi,eax     ;backup
+    mov di,cx
+
+;set number of sectors to read
+    mov dx,0x1f2
+    mov al,cl
+    out dx,al   
+
+    mov eax,esi     ;cover eax
+
+;set LBA index
+    ;LBA 0~7 bit
+    mov dx,0x1f3
+    out dx,al
+    ;LBA 8~15 bit
+    mov cl,8
+    shr eax,cl
+    mov dx,0x1f4
+    out dx,al
+    ;LBA 16~32 bit
+    shr eax,cl
+    mov dx,0x1f5
+    out dx,al
+
+    shr eax,cl  ;LBA 24~27 bit 
+    and al,0x0f
+    or al,0xe0      ;7~4 : 1110b ,means LBA mode
+    mov dx,0x1f6
+    out dx,al
+
+;set read command 0x20
+    mov dx,0x1f7
+    mov al,0x20
+    out dx,al
+
+.not_ready:
+    nop
+    in al,dx
+    and al,0x88     ; 4th bit 1:disk ready  ; 7th bit 1: disk busy
+    cmp al,0x08
+    jnz .not_ready
+
+    mov ax,di
+    mov dx, 256
+    mul dx
+    mov cx,ax
+    mov dx,0x1f0
+
+.go_on_read:
+    in ax,dx
+    mov [ebx], ax
+    add ebx,2
+    loop .go_on_read
+    ret 
+
 
 
 loadermsg   db '2 loader in real.'
