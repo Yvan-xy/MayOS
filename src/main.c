@@ -14,5 +14,7 @@ void main()
     putch('\n');
     put_int(0x0);
 
+    idt_install();
+
     for (;;);
 }
