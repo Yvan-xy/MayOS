@@ -81,25 +81,28 @@ void irq_uninstall_handler(int irq)
 *  Interrupt Controller (PICs - also called the 8259's) in
 *  order to make IRQ0 to 15 be remapped to IDT entries 32 to
 *  47 */
-void irq_remap(void)
-{
-    outportb(0x20, 0x11);
-    outportb(0xA0, 0x11);
-    outportb(0x21, 0x20);
-    outportb(0xA1, 0x28);
-    outportb(0x21, 0x04);
-    outportb(0xA1, 0x02);
-    outportb(0x21, 0x01);
-    outportb(0xA1, 0x01);
-    outportb(0x21, 0x0);
+void irq_remap(void) {
+    outportb(0x20, 0x11);   // Master ICW1, cascade
+    outportb(0xA0, 0x11);   // Slave  ICW1  cascade
+
+    outportb(0x21, 0x20);   // Master ICW2, set begin interupt number 32
+    outportb(0xA1, 0x28);   // Slave  ICW2, set begin interupt number 40
+    
+    outportb(0x21, 0x04);   // Master ICW3, IR2 connect slave   
+    outportb(0xA1, 0x02);   // Slave  ICW3, connect to master IR2
+
+    outportb(0x21, 0x01);   // Master ICW4, 8086 mode, normal EOI
+    outportb(0xA1, 0x01);   // Slave  ICW4, 8086 mode, normal EOI
+
+    /* Open all IR */
+    outportb(0x21, 0x0);    
     outportb(0xA1, 0x0);
 }
 
 /* We first remap the interrupt controllers, and then we install
 *  the appropriate ISRs to the correct entries in the IDT. This
 *  is just like installing the exception handlers */
-void irq_install()
-{
+void irq_install() {
     irq_remap();
 
     idt_set_gate(32, (unsigned)irq0,  SELECTOR_K_CODE, 0x8E);

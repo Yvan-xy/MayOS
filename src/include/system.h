@@ -16,6 +16,8 @@
 #define SELECTOR_K_GS       ((3 << 3) + (TI_GDT << 2) + RPL0)
 #define SELECTOR_K_STACK    SELECTOR_K_DATA
 
+#define __CONCAT(x, y) x ## y
+#define __STRING(x) #x
 
 /* MAIN.C */
 extern int strlen(const char *str);

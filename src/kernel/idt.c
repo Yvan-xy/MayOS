@@ -63,6 +63,9 @@ void isrs_install()
     idt_set_gate(29, (unsigned)isr29, SELECTOR_K_CODE, 0x8E);
     idt_set_gate(30, (unsigned)isr30, SELECTOR_K_CODE, 0x8E);
     idt_set_gate(31, (unsigned)isr31, SELECTOR_K_CODE, 0x8E);
+    // for(int i = 0; i <= 31; ++i) {
+    //     idt_set_gate(i, (unsigned)__CONCAT(isr, (#i)), SELECTOR_K_CODE, 0x8E);
+    // }
 }
 
 /* Installs the IDT */
@@ -83,5 +86,7 @@ void idt_install() {
     isrs_install();
 
     /* Init IRQS */
+    irq_install();
 
+    puts("IDT install done!\n");
 }
