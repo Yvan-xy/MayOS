@@ -39,5 +39,13 @@ void irq_install_handler(int irq, void (*handler)(struct regs *r));
 /* This clears the handler for a given IRQ */
 void irq_uninstall_handler(int irq);
 
+/* Time Device -- 8253 */
+void timer_phase(int hz);
+void timer_handler(struct regs *r);
+void timer_init();
+void sleep(int ticks);
 
+/* KeyBoard Device */
+void keyboard_init();
+void kb_handler(struct regs *r);
 #endif

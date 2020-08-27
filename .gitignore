@@ -8,4 +8,7 @@
 bochs.log
 
 #bin
-./bin
+bin
+*.elf
+a*
+*.o

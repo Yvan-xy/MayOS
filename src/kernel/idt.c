@@ -88,5 +88,11 @@ void idt_install() {
     /* Init IRQS */
     irq_install();
 
+    // Install time interupt 0x32
+    timer_init();
+
+    // Install keyboard device
+    keyboard_init();
+
     puts("IDT install done!\n");
 }

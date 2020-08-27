@@ -19,6 +19,8 @@
 #define __CONCAT(x, y) x ## y
 #define __STRING(x) #x
 
+#define ENDL puts("\n")
+
 /* MAIN.C */
 extern int strlen(const char *str);
 extern unsigned char *memcpy(unsigned char *dest, const unsigned char *src, int count);
@@ -29,10 +31,10 @@ extern void outportb (unsigned short _port, unsigned char _data);
 
 /* This defines what the stack looks like after an ISR was running */
 struct regs {
-    unsigned int gs, fs, es, ds;      /* pushed the segs last */
-    unsigned int edi, esi, ebp, esp, ebx, edx, ecx, eax;  /* pushed by 'pusha' */
-    unsigned int int_no, err_code;    /* our 'push byte #' and ecodes do this */
-    unsigned int eip, cs, eflags, useresp, ss;   /* pushed by the processor automatically */ 
+    uint32_t gs, fs, es, ds;      /* pushed the segs last */
+    uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;  /* pushed by 'pusha' */
+    uint32_t int_no, err_code;    /* our 'push byte #' and ecodes do this */
+    uint32_t eip, cs, eflags, useresp, ss;   /* pushed by the processor automatically */ 
 };
 
 #endif

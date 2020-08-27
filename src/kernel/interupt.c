@@ -95,6 +95,8 @@ void irq_remap(void) {
     outportb(0xA1, 0x01);   // Slave  ICW4, 8086 mode, normal EOI
 
     /* Open all IR */
+    // outportb(0x21, 0xfe);    
+    // outportb(0xA1, 0xff);
     outportb(0x21, 0x0);    
     outportb(0xA1, 0x0);
 }
@@ -140,7 +142,18 @@ void irq_handler(struct regs *r) {
 
     /* Find out if we have a custom handler to run for this
     *  IRQ, and then finally, run it */
-    handler = irq_routines[r->int_no - 32];
+    
+    // log
+    /*
+    if (r->int_no != 0x20) {
+        puts("int_no is: ");
+        put_int(r->int_no);
+        puts("\n");
+    }
+    */
+    
+    int idx = r->int_no - 32;
+    handler = irq_routines[idx];
     if (handler) {
         handler(r);
     }
