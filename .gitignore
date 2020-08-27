@@ -6,9 +6,11 @@
 
 #log
 bochs.log
+snapshot.txt
 
 #bin
 bin
 *.elf
 a*
 *.o
+*.img
