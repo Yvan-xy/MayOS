@@ -17,23 +17,23 @@
 #define TTY_EOF     254
 #define TTY_INT     255
 
-#define KB_IS_RELEASE(sc)   (sc & 0x80) 
+#define KB_IS_RELEASE(sc)   (sc & 0x80)
 #define KB_IS_ESCAPE(sc)    (sc == 0xe0)
 
 static uint32_t kb_mode = 0;
 
 /* maybe scancode set 1 ?*/
 static char kb_map[128] = {
-    0,  
+    0,
     0x1b,   /* esc */
     '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
-    '-', '=', '\b', '\t', 'q', 'w', 'e', 'r',    
+    '-', '=', '\b', '\t', 'q', 'w', 'e', 'r',
     't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n',
     0,      /* left ctrl */
     'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';','\'', '`',
     0,      /* left shift */
     '\\', 'z', 'x', 'c', 'v', 'b', 'n',
-    'm', ',', '.', '/',   
+    'm', ',', '.', '/',
     0,    /* right shift */
     '*',
     0,  /* alt */
@@ -61,18 +61,17 @@ static char kb_map[128] = {
     0,    /* all other keys are undefined */
 };
 
-static char kb_shift_map[128] =
-{
-    0,  
+static char kb_shift_map[128] = {
+    0,
     0x1b, /* esc */
     '!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
-    '_', '+', '\b', '\t', 'Q', 'W', 'E', 'R',    
+    '_', '+', '\b', '\t', 'Q', 'W', 'E', 'R',
     'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '\n',
     0,  /* left control */
     'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':','\"', '~',
     0,    /* left shift */
     '|', 'Z', 'X', 'C', 'V', 'B', 'N',
-    'M', '<', '>', '?',   
+    'M', '<', '>', '?',
     0,    /* right shift */
     '*',
     0,  /* alt */
@@ -100,32 +99,36 @@ static char kb_shift_map[128] =
     0,    /* all other keys are undefined */
 };
 
-static char shift(char sc){
+static char shift(char sc) {
     char ch = sc & 0x7f;    // clear highest bit
 
     /* the previous scancode is 0xe0*/
-    if (kb_mode & E0ESC) { 
+    if (kb_mode & E0ESC) {
         switch (ch) {
-            case 0x1D: return CTRL;
-            case 0x38: return ALT;
+        case 0x1D:
+            return CTRL;
+        case 0x38:
+            return ALT;
         }
-    }
-    else {
+    } else {
         switch(ch) {
-            case 0x2A:
-            case 0x36: return SHIFT;
-            case 0x1D: return CTRL;
-            case 0x38: return ALT;
+        case 0x2A:
+        case 0x36:
+            return SHIFT;
+        case 0x1D:
+            return CTRL;
+        case 0x38:
+            return ALT;
         }
     }
     return 0;
 }
 
-void kb_handler(struct regs *r){
+void kb_handler(struct regs *r) {
     uint8_t sc, m;
     char ch;
 
-    if ((inportb(KB_STAT) & KB_STAT_OBF) == 0){
+    if ((inportb(KB_STAT) & KB_STAT_OBF) == 0) {
         /* no data to read */
         return;
     }
@@ -137,15 +140,15 @@ void kb_handler(struct regs *r){
     ENDL;
 
     /* is a escape char? */
-    if (KB_IS_ESCAPE(sc)){
+    if (KB_IS_ESCAPE(sc)) {
         puts("kb_handler: ESCAPE\n");
         kb_mode |= E0ESC;
         return;
-    } 
-    
+    }
+
     /* check alt shift and ctrl */
-    if ((m = shift(sc))){
-        if (KB_IS_RELEASE(sc)){
+    if ((m = shift(sc))) {
+        if (KB_IS_RELEASE(sc)) {
             /* clear mode when release the key */
             kb_mode &= ~m;
         } else {
@@ -154,7 +157,7 @@ void kb_handler(struct regs *r){
         return;
     }
 
-    if (kb_mode & SHIFT){
+    if (kb_mode & SHIFT) {
         puts("kb_handler: SHIFT\n");
 
         ch = kb_shift_map[sc & 0x7f];
@@ -162,25 +165,31 @@ void kb_handler(struct regs *r){
         ch = kb_map[sc & 0x7f];
     }
 
-    if (kb_mode & CTRL){
+    if (kb_mode & CTRL) {
         puts("kb_handler: CTRL\n");
-        switch(ch){
-            // console control char
-            case 'd': puts("kb_handler: EOF\n"); ch = TTY_EOF; break;
-            case 'c': puts("kb_handler: INT\n"); ch = TTY_INT; break;
+        switch(ch) {
+        // console control char
+        case 'd':
+            puts("kb_handler: EOF\n");
+            ch = TTY_EOF;
+            break;
+        case 'c':
+            puts("kb_handler: INT\n");
+            ch = TTY_INT;
+            break;
         }
     }
 
-    if (kb_mode & ALT){
+    if (kb_mode & ALT) {
         puts("kb_handler: ALT\n");
         /* nothing to do ? */
     }
 
     /* on release */
-    if (KB_IS_RELEASE(sc)){
+    if (KB_IS_RELEASE(sc)) {
         // puts("kb_handler: release, clear E0ESC\n");
         kb_mode &= ~E0ESC;
-    } 
+    }
     /* on press */
     else if (ch != 0) {
         puts("kb_handler: char: ");
@@ -189,7 +198,7 @@ void kb_handler(struct regs *r){
     }
 }
 
-void keyboard_init(){
+void keyboard_init() {
     puts("Start install keyboard!\n");
     irq_install_handler(1, kb_handler);
 }

@@ -1,7 +1,7 @@
 #include <system.h>
 #include <stdint.h>
 
-struct idt_entry{ 
+struct idt_entry {
     uint16_t offset_low;
     uint16_t selector;
     uint8_t  always0;

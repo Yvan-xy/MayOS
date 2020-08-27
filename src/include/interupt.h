@@ -39,6 +39,22 @@ void irq_install_handler(int irq, void (*handler)(struct regs *r));
 /* This clears the handler for a given IRQ */
 void irq_uninstall_handler(int irq);
 
+
+#define EFLAG_IF 0x00000200
+#define GET_EFALGS(var) asm volatile("pushfl; popl %0" : "=g" (var))
+
+typedef enum _INTR_STATUS {
+    INTR_OFF,
+    INTR_ON
+} INTR_STATUS;
+
+INTR_STATUS open_intr();
+INTR_STATUS close_intr();
+INTR_STATUS get_intr_status();
+INTR_STATUS set_intr_status(INTR_STATUS status);
+
+/* --------------- Install Interupt ----------------- */
+
 /* Time Device -- 8253 */
 void timer_phase(int hz);
 void timer_handler(struct regs *r);

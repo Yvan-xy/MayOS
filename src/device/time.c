@@ -19,13 +19,13 @@ int timer_ticks = 0;
 void timer_handler(struct regs *r) {
     /* Increment our 'tick count' */
     timer_ticks++;
-    
+
     // puts("Time handler!\n");
 
     /* Every 18 clocks (approximately 1 second), we will
     *  display a message on the screen */
     // if (timer_ticks % 100 == 0) {
-        // puts("One second has passed\n");
+    // puts("One second has passed\n");
     // }
 }
 
@@ -42,7 +42,7 @@ void sleep(int ticks) {
     while(timer_ticks<eticks);
 }
 
-void timer_init(){
+void timer_init() {
     puts("Timer init start!\n");
     timer_phase(100);   // tigger 100 times pre second
     timer_install();

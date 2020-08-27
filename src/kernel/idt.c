@@ -3,18 +3,18 @@
 
 /* Use this function to set an entry in the IDT. Alot simpler
 *  than twiddling with the GDT ;) */
-void idt_set_gate(unsigned char num, uint32_t base, 
-    uint16_t selector, unsigned char flags) {
+void idt_set_gate(unsigned char num, uint32_t base,
+                  uint16_t selector, unsigned char flags) {
     /* We'll leave you to try and code this function: take the
     *  argument 'base' and split it up into a high and low 16-bits,
     *  storing them in idt[num].base_hi and base_lo. The rest of the
     *  fields that you must set in idt[num] are fairly self-
     *  explanatory when it comes to setup */
-   idt[num].flags       = flags;
-   idt[num].always0     = 0;
-   idt[num].selector    = selector;
-   idt[num].offset_low  = base & 0x0000FFFF;
-   idt[num].offset_high = (base & 0xFFFF0000) >> 16;
+    idt[num].flags       = flags;
+    idt[num].always0     = 0;
+    idt[num].selector    = selector;
+    idt[num].offset_low  = base & 0x0000FFFF;
+    idt[num].offset_high = (base & 0xFFFF0000) >> 16;
 }
 
 /* This is a very repetitive function... it's not hard, it's
@@ -26,8 +26,7 @@ void idt_set_gate(unsigned char num, uint32_t base,
 *  running in ring 0 (kernel level), and has the lower 5 bits
 *  set to the required '14', which is represented by 'E' in
 *  hex. */
-void isrs_install()
-{
+void isrs_install() {
     idt_set_gate(0,  (unsigned)isr0,  SELECTOR_K_CODE, 0x8E);
     idt_set_gate(1,  (unsigned)isr1,  SELECTOR_K_CODE, 0x8E);
     idt_set_gate(2,  (unsigned)isr2,  SELECTOR_K_CODE, 0x8E);

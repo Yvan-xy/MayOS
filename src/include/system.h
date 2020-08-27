@@ -2,6 +2,8 @@
 #define __SYSTEM_H
 
 #include <scrn.h>
+#include <string.h>
+#define NULL    0
 
 #define RPL0    0
 #define RPL1    1
@@ -22,7 +24,6 @@
 #define ENDL puts("\n")
 
 /* MAIN.C */
-extern int strlen(const char *str);
 extern unsigned char *memcpy(unsigned char *dest, const unsigned char *src, int count);
 extern unsigned char *memset(unsigned char *dest, unsigned char val, int count);
 extern unsigned short *memsetw(unsigned short *dest, unsigned short val, int count);
@@ -34,7 +35,7 @@ struct regs {
     uint32_t gs, fs, es, ds;      /* pushed the segs last */
     uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;  /* pushed by 'pusha' */
     uint32_t int_no, err_code;    /* our 'push byte #' and ecodes do this */
-    uint32_t eip, cs, eflags, useresp, ss;   /* pushed by the processor automatically */ 
+    uint32_t eip, cs, eflags, useresp, ss;   /* pushed by the processor automatically */
 };
 
 #endif
