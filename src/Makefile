@@ -28,6 +28,6 @@ kernel.elf: $(OBJECTS)
 	objdump -d kernel.elf > kernel.asm
 
 clean:
-	rm *.o
+	rm *.o kernel.elf kernel.asm
 
 done: echo "DONE!"
