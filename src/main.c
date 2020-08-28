@@ -1,4 +1,5 @@
 #include <debug.h>
+#include <memory.h>
 #include <system.h>
 
 void main() {
@@ -11,7 +12,9 @@ void main() {
     settextcolor(WHITE, BLACK);
     idt_install();
 
-    ASSERT(1 == 2);
+    mem_init();
+
+    // ASSERT(1 == 2);
 
     __asm__ __volatile__ ("sti");
 

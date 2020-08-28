@@ -1,7 +1,4 @@
-; This is the kernel's entry point. We could either call main here,
-; or we can use this to setup the stack or other nice stuff, like
-; perhaps setting up the GDT and segments. Please note that interrupts
-; are disabled at this point: More on interrupts later!
+; This is the kernel's entry point.
 [BITS 32]
 global __start
 
@@ -15,15 +12,12 @@ __start:
     
     ; AOUT kludge - must be physical addresses. Make a note of these:
     ; The linker script fills in the data for these ones!
-    ; dd mboot
     dd code
     dd bss
     dd end
     dd __start
 
-; This is an endless loop here. Make a note of this: Later on, we
-; will insert an 'extern _main', followed by 'call _main', right
-; before the 'jmp $'.
+
 stublet:
     extern main
     call main
