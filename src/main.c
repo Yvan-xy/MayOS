@@ -14,6 +14,11 @@ void main() {
 
     mem_init();
 
+    void* vaddr = get_kernel_pages(3);
+    puts("Get kernel page start addr: ");
+    put_int(vaddr);
+    ENDL;
+
     // ASSERT(1 == 2);
 
     __asm__ __volatile__ ("sti");

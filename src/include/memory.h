@@ -28,7 +28,7 @@ enum pool_flags {
 #define PG_RW_R 0   // R/W attribute bit, Read/Execute
 #define PG_RW_W 2   // R/W attribute bit, Read/Write/Execute
 #define PG_US_S 0   // U/S attribute bit, system level
-#define PG_US_u 4   // U/S attribute bit, user level
+#define PG_US_U 4   // U/S attribute bit, user level
 
 #define PDE_MASK 0xffc00000     // 31 ~ 22 bits, PDE index
 #define PTE_MASK 0x003ff000     // 21 ~ 12 bits, PTE index
@@ -43,5 +43,13 @@ struct virtual_addr {
 
 extern struct pool kernel_pool, user_pool;
 void mem_init(void);
+
+uint32_t* pte_ptr(uint32_t vaddr);
+uint32_t* pde_ptr(uint32_t vaddr);
+static void* vaddr_get(enum pool_flags pf, uint32_t pg_cnt);
+static void* palloc(struct pool* m_pool);
+static void page_table_add(void* _vaddr, void* _page_phyaddr);
+void* malloc_page(enum pool_flags pf, uint32_t pg_cnt);
+void* get_kernel_pages(uint32_t pg_cnt);
 
 #endif
