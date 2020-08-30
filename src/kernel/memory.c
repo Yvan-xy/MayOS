@@ -2,6 +2,7 @@
 #include <memory.h>
 #include <bitmap.h>
 #include <system.h>
+#include <printk.h>
 
 #define PG_SIZE 4096
 
@@ -67,42 +68,25 @@ static void mem_pool_init(uint32_t all_memory) {
     user_pool.pool_bitmap.bits = (void*)(MEM_BITMAP_BASE + kbm_length);
 
     /* -------- LOGS --------*/
-    puts("All free pages: ");
-    put_int(all_free_pages);
+
+    LOG("All free pages", all_free_pages);
+
+    LOG("Kernel free pages", kernel_free_pages);
+
+    LOG("Kernel Pool Bit Map Start", kernel_pool.pool_bitmap.bits);
+
+    LOG("Kernel Pool phy_addr_start", kernel_pool.phy_addr_start);
+
+    LOG("Kernel Pool Size", kernel_pool.pool_size);
     ENDL;
 
-    puts("Kernel free pages: ");
-    put_int(kernel_free_pages);
-    ENDL;
+    LOG("User free pages", user_free_pages);
 
-    puts("Kernel Pool Bit Map Start: ");
-    put_int(kernel_pool.pool_bitmap.bits);
-    ENDL;
+    LOG("User Pool Bit Map Start", user_pool.pool_bitmap.bits);
 
-    puts("Kernel Pool phy_addr_start: ");
-    put_int(kernel_pool.phy_addr_start);
-    ENDL;
+    LOG("User Pool phy_addr_start", user_pool.phy_addr_start);
 
-    puts("Kernel Pool Size: ");
-    put_int(kernel_pool.pool_size);
-    ENDL;
-    ENDL;
-
-    puts("User free pages: ");
-    put_int(user_free_pages);
-    ENDL;
-
-    puts("User Pool Bit Map Start: ");
-    put_int(user_pool.pool_bitmap.bits);
-    ENDL;
-
-    puts("User Pool phy_addr_start: ");
-    put_int(user_pool.phy_addr_start);
-    ENDL;
-
-    puts("User Pool Size: ");
-    put_int(user_pool.pool_size);
-    ENDL;
+    LOG("User Pool Size", user_pool.pool_size);
 
     /* Clear bitmaps */
     bitmap_init(&kernel_pool.pool_bitmap);

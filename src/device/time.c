@@ -1,3 +1,6 @@
+#include <debug.h>
+#include <thread.h>
+#include <printk.h>
 #include <interupt.h>
 
 void timer_phase(int hz) {
@@ -20,13 +23,21 @@ void timer_handler(struct regs *r) {
     /* Increment our 'tick count' */
     timer_ticks++;
 
-    // puts("Time handler!\n");
+    struct task_struct* cur_thread = running_thread();
+    ASSERT(cur_thread->stack_magic == STACK_MAGIC);     // Check if stack overflow
 
-    /* Every 18 clocks (approximately 1 second), we will
-    *  display a message on the screen */
-    // if (timer_ticks % 100 == 0) {
-    // puts("One second has passed\n");
-    // }
+    cur_thread->elapsed_ticks++;
+    printk("\ncur_thread name: %s\n", cur_thread->name);
+    printk("\nTicks: %d\n", cur_thread->ticks);
+    if (cur_thread->ticks == 0) {
+        printk("change Process\n");
+        schedule();
+    } else {
+        cur_thread->ticks--;
+    }
+    if (timer_ticks % 100 == 0) {
+        puts("1 second\n");
+    }
 }
 
 /* Sets up the system clock by installing the timer handler
@@ -43,7 +54,6 @@ void sleep(int ticks) {
 }
 
 void timer_init() {
-    puts("Timer init start!\n");
     timer_phase(100);   // tigger 100 times pre second
     timer_install();
 }

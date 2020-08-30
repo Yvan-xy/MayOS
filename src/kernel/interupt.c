@@ -1,3 +1,4 @@
+#include <printk.h>
 #include <interupt.h>
 
 /* This is a simple string array. It contains the message that
@@ -130,13 +131,11 @@ void irq_handler(struct regs *r) {
     *  IRQ, and then finally, run it */
 
     // log
-    /*
+    // /*
     if (r->int_no != 0x20) {
-        puts("int_no is: ");
-        put_int(r->int_no);
-        puts("\n");
+        LOG("int_no is: ", r->int_no);
     }
-    */
+    // */
 
     int idx = r->int_no - 32;
     handler = irq_routines[idx];
@@ -171,7 +170,7 @@ INTR_STATUS close_intr() {
     INTR_STATUS old_status;
     old_status = get_intr_status();
     if (get_intr_status() == INTR_ON) {
-        asm volatile("cli" : : : "memory");
+        __asm__ __volatile__ ("cli" : : : "memory");
     }
     return old_status;
 }

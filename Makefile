@@ -5,8 +5,8 @@ dd:
 	dd if=./bin/loader.bin of=hd.img bs=512 count=4 seek=2 conv=notrunc
 	dd if=./bin/kernel.bin of=hd.img bs=512 count=200 seek=9 conv=notrunc
 
-run:
-	bochs -q
+run: dd
+	bochs -q -f bochsrc
 
 clean:
 	rm ./bin/loader.bin ./bin/mbr.bin

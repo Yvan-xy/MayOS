@@ -1,4 +1,5 @@
 #include <idt.h>
+#include <printk.h>
 #include <interupt.h>
 
 /* Use this function to set an entry in the IDT. Alot simpler
@@ -92,6 +93,4 @@ void idt_install() {
 
     // Install keyboard device
     keyboard_init();
-
-    puts("IDT install done!\n");
 }

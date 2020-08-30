@@ -1,5 +1,5 @@
-#ifndef __SYSTEM_H
-#define __SYSTEM_H
+#ifndef __MAY_SYSTEM_H
+#define __MAY_SYSTEM_H
 
 #include <scrn.h>
 #include <string.h>
