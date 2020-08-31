@@ -3,7 +3,7 @@
 #include <memory.h>
 #include <thread.h>
 #include <system.h>
-#include <interupt.h>
+#include <interrupt.h>
 
 void k_thread_a(void*);
 void k_thread_b(void*);
@@ -25,26 +25,27 @@ void main() {
 
     thread_init();
 
-    // thread_start("k_thread_a", 31, k_thread_a, "argA \n");
-    // thread_start("k_thread_b", 31, k_thread_b, "argB ");
+    thread_start("k_thread_a", 31, k_thread_a, "argA");
+    thread_start("k_thread_b", 31, k_thread_b, "argB");
 
     open_intr();
     while(1) {
-        // puts("Main ");
+        puts("Main");
     }
 
     for (;;);
 }
 
+extern int timer_ticks;
+
 void k_thread_a(void* arg) {
     char* para = arg;
-    INTR_STATUS status;
     while(1) {
-        status = get_intr_status();
-        LOG("Interupt status: ", status);
+        puts(para);
     }
 }
 void k_thread_b(void* arg) {
+
     char* para = arg;
     while(1) {
         puts(para);

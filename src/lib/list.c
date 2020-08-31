@@ -2,7 +2,7 @@
 #include <system.h>
 #include <printk.h>
 #include <stdint.h>
-#include <interupt.h>
+#include <interrupt.h>
 
 
 /* Init the double linked list. */

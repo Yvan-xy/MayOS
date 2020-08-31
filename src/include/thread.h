@@ -24,7 +24,7 @@ enum task_status {
  *  |   EAX    |
  *  |----------|
  *  |   ECX    |
- *  |----------|    // Interupt stack in start.s
+ *  |----------|    // Interrupt stack in start.s
  *  |   EDX    |    // push     0
  *  |----------|    // push     intr_num
  *  |   EBX    |    // pusha
@@ -94,6 +94,8 @@ struct task_struct* thread_start(char* name, int prio,
 struct task_struct* running_thread();
 
 void thread_init(void);
+void thread_block(enum task_status status);
+void thread_unblock(struct task_struct* pthread);
 
 void schedule();
 

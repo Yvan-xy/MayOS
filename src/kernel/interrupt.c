@@ -1,5 +1,5 @@
 #include <printk.h>
-#include <interupt.h>
+#include <interrupt.h>
 
 /* This is a simple string array. It contains the message that
 *  corresponds to each and every exception. We get the correct
@@ -69,6 +69,11 @@ void irq_uninstall_handler(int irq) {
     irq_routines[irq] = 0;
 }
 
+void pic_init(void) {
+    outportb(0x20, 0x11);   // Master ICW1, cascade
+    outportb(0xA0, 0x11);   // Slave  ICW1  cascade
+}
+
 /* Normally, IRQs 0 to 7 are mapped to entries 8 to 15. This
 *  is a problem in protected mode, because IDT entry 8 is a
 *  Double Fault! Without remapping, every time IRQ0 fires,
@@ -78,11 +83,10 @@ void irq_uninstall_handler(int irq) {
 *  order to make IRQ0 to 15 be remapped to IDT entries 32 to
 *  47 */
 void irq_remap(void) {
-    outportb(0x20, 0x11);   // Master ICW1, cascade
-    outportb(0xA0, 0x11);   // Slave  ICW1  cascade
+    pic_init();             // Init the PIC
 
-    outportb(0x21, 0x20);   // Master ICW2, set begin interupt number 32
-    outportb(0xA1, 0x28);   // Slave  ICW2, set begin interupt number 40
+    outportb(0x21, 0x20);   // Master ICW2, set begin interrupt number 32
+    outportb(0xA1, 0x28);   // Slave  ICW2, set begin interrupt number 40
 
     outportb(0x21, 0x04);   // Master ICW3, IR2 connect slave
     outportb(0xA1, 0x02);   // Slave  ICW3, connect to master IR2
@@ -155,7 +159,7 @@ void irq_handler(struct regs *r) {
     outportb(0x20, 0x20);
 }
 
-/* Open interupt flag. Return old status. */
+/* Open interrupt flag. Return old status. */
 INTR_STATUS open_intr() {
     INTR_STATUS old_status;
     old_status = get_intr_status();
@@ -165,7 +169,7 @@ INTR_STATUS open_intr() {
     return old_status;
 }
 
-/* Close interupt flag. Return old status. */
+/* Close interrupt flag. Return old status. */
 INTR_STATUS close_intr() {
     INTR_STATUS old_status;
     old_status = get_intr_status();
@@ -175,12 +179,12 @@ INTR_STATUS close_intr() {
     return old_status;
 }
 
-/* Set interupt flag, return old status. */
+/* Set interrupt flag, return old status. */
 INTR_STATUS set_intr_status(INTR_STATUS status) {
     return (status & INTR_ON) ? open_intr() : close_intr();
 }
 
-/* Get current interupt status. */
+/* Get current interrupt status. */
 INTR_STATUS get_intr_status() {
     uint32_t eflages = 0;
     GET_EFALGS(eflages);

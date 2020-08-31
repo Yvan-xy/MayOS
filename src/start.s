@@ -32,7 +32,7 @@ idt_load:
     ret
 
 
-;--- Set Interupt service routine ---
+;--- Set Interrupt service routine ---
 %macro m_isr 1
 [global isr%1]
 isr%1:
@@ -85,10 +85,11 @@ isr_common_stub:
     iret
 
 
-; ---- Set Interupt request ----
+; ---- Set Interrupt request ----
 %macro m_irq 1
 [global irq%1]
 irq%1:
+    cli
     cli
     push 0
     push %1+32

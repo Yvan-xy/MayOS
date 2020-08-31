@@ -1,7 +1,7 @@
 CC = nasm
 LD = ld
 
-OBJECTS = start.o main.o scrn.o system.o idt.o interupt.o time.o keyboard.o \
+OBJECTS = start.o main.o scrn.o system.o idt.o interrupt.o time.o keyboard.o \
 		  debug.o string.o bitmap.o memory.o thread.o list.o printk.o
 
 CFLAGS = -Wall -fno-pie -O -fstrength-reduce -fomit-frame-pointer \
@@ -22,7 +22,7 @@ all: kernel.bin kernel.elf
 	gcc $(CFLAGS) -I./include -c -o bitmap.o 	./kernel/bitmap.c 		
 	gcc $(CFLAGS) -I./include -c -o memory.o    ./kernel/memory.c 
 	gcc $(CFLAGS) -I./include -c -o thread.o    ./kernel/thread.c 
-	gcc $(CFLAGS) -I./include -c -o interupt.o  ./kernel/interupt.c 
+	gcc $(CFLAGS) -I./include -c -o interrupt.o ./kernel/interrupt.c 
 	gcc $(CFLAGS) -I./include -c -o time.o 		./device/time.c 	
 	gcc $(CFLAGS) -I./include -c -o keyboard.o  ./device/keyboard.c 
 

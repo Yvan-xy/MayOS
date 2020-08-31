@@ -1,6 +1,6 @@
 #include <idt.h>
 #include <printk.h>
-#include <interupt.h>
+#include <interrupt.h>
 
 /* Use this function to set an entry in the IDT. Alot simpler
 *  than twiddling with the GDT ;) */
@@ -88,7 +88,7 @@ void idt_install() {
     /* Init IRQS */
     irq_install();
 
-    // Install time interupt 0x32
+    // Install time interrupt 0x32
     timer_init();
 
     // Install keyboard device

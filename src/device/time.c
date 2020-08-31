@@ -1,11 +1,11 @@
 #include <debug.h>
 #include <thread.h>
 #include <printk.h>
-#include <interupt.h>
+#include <interrupt.h>
 
 void timer_phase(int hz) {
     int divisor = 1193180 / hz;       /* Calculate our divisor */
-    outportb(0x43, 0x34);             /* Set our command byte 0x34 */
+    outportb(0x43, 0x36);             /* Set our command byte 0x34 */
     outportb(0x40, divisor & 0xFF);   /* Set low byte of divisor */
     outportb(0x40, divisor >> 8);     /* Set high byte of divisor */
 }
@@ -27,16 +27,15 @@ void timer_handler(struct regs *r) {
     ASSERT(cur_thread->stack_magic == STACK_MAGIC);     // Check if stack overflow
 
     cur_thread->elapsed_ticks++;
-    printk("\ncur_thread name: %s\n", cur_thread->name);
-    printk("\nTicks: %d\n", cur_thread->ticks);
+    // printk("\ncur_thread name: %s\n", cur_thread->name);
+    // printk("\nTicks: %d\n", cur_thread->ticks);
     if (cur_thread->ticks == 0) {
-        printk("change Process\n");
         schedule();
     } else {
         cur_thread->ticks--;
     }
     if (timer_ticks % 100 == 0) {
-        puts("1 second\n");
+        // puts("1 second\n");
     }
 }
 

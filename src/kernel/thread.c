@@ -2,14 +2,14 @@
 #include <thread.h>
 #include <memory.h>
 #include <printk.h>
-#include <interupt.h>
+#include <interrupt.h>
 
 #define PG_SIZE 4096
 
 struct task_struct* main_thread;     // PCB of the main thread
-list thread_ready_list;             // Ready thread list
-list thread_all_list;               // All thread list
-static list_elem* thread_tag;       // Save the node of the list
+list thread_ready_list;              // Ready thread list
+list thread_all_list;                // All thread list
+static list_elem* thread_tag;        // Save the node of the list
 
 extern void switch_to(struct task_struct* cur, struct task_struct* next);
 
@@ -21,14 +21,22 @@ struct task_struct* running_thread() {
     return (struct task_struct*)(esp & 0xfffff000);
 }
 
+/* The callback function to call the thread function
+ * We need to reinit the PIC. I don't know why the damn 8259 need
+ * to reinit.
+ */
 static void kernel_thread(thread_func* function, void* func_arg) {
+    pic_init();
     open_intr();
     function(func_arg);
 }
 
+/* Create a new thread, set the thread function and arguments.
+ * Init the thread stack. Set eip to kernel_thread.
+ */
 void thread_create(struct task_struct* pthread,
                    thread_func function, void* func_arg) {
-    /* Reserve the stack space of interupt. */
+    /* Reserve the stack space of interrupt. */
     pthread->self_kstack -= sizeof(struct regs);
 
     /* Reserve the space of thread_stack. */
@@ -43,6 +51,7 @@ void thread_create(struct task_struct* pthread,
     kthread_stack->esi = kthread_stack->edi = 0;
 }
 
+/* Init the thread, set the priority and ticks, init the stack pointer and status. */
 void init_thread(struct task_struct* pthread, char* name, int prio) {
     memset(pthread, 0, sizeof(struct task_struct));
     strcpy(pthread->name, name);
@@ -60,6 +69,7 @@ void init_thread(struct task_struct* pthread, char* name, int prio) {
     pthread->stack_magic = STACK_MAGIC;
 }
 
+/* Start a thread in kernel, add the thread to the ready list. */
 struct task_struct* thread_start(char* name, int prio,
                                  thread_func function, void* args) {
     struct task_struct* thread = get_kernel_pages(1);
@@ -97,9 +107,9 @@ void schedule() {
         cur->ticks = cur->priority;
         cur->status = TASK_READY;
     } else {
-         /* Do nothing */
+        /* Do nothing */
     }
-    
+
     ASSERT(!list_empty(&thread_ready_list));    // The ready list shouldn't be empty
     thread_tag = NULL;  // Clear the thread_tag
 
@@ -113,4 +123,42 @@ void thread_init(void) {
     list_init(&thread_all_list);
     list_init(&thread_ready_list);
     make_main_thread();
+}
+
+/* Block the thread. */
+void thread_block(enum task_status status) {
+    /* Check if blocking status. */
+    ASSERT((status == TASK_BLOCKED) || (status == TASK_HANGING) || (status == TASK_WAITING));
+
+    INTR_STATUS intr_status = close_intr(); // close interrupt
+
+    struct task_struct* cur_task = running_thread();
+    cur_task->status = status;
+
+    schedule();
+
+    // This status is set only when the thread is unblocked.
+    set_intr_status(status);
+}
+
+/* Unblock the thread. */
+void thread_unblock(struct task_struct* pthread) {
+    INTR_STATUS intr_status = close_intr();     // Close the interrupt, atom operation
+
+    /* Check if current status is blocked. */
+    enum task_status cur_status = pthread->status;
+    ASSERT((cur_status == TASK_BLOCKED) || (cur_status == TASK_HANGING) || (cur_status == TASK_WAITING));
+
+    if (cur_status != TASK_READY) {
+        /* The blocked thread shouldn't be in the ready list. */
+        ASSERT(!elem_find(&thread_ready_list, &pthread->general_tag));
+        if (elem_find(&thread_ready_list, &pthread->general_tag)) {
+            PANIC("thread_unblock: blocked thread in ready list");
+        }
+
+        list_push(&thread_ready_list, &pthread->general_tag);   // Push the thread to the list head
+
+        pthread->status = TASK_READY;   // Update its status to TASK_READY.
+    }
+    set_intr_status(intr_status);   // Recover the interrupt status.
 }
