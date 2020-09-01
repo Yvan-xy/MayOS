@@ -2,12 +2,12 @@
 #include <debug.h>
 #include <interrupt.h>
 
-void sema_init(semaphore* psema, uint8_t value) {
-    psema->value = value;
+volatile void sema_init(semaphore* psema, uint8_t value) {
+    psema->value = value & 0xff;
     list_init(&psema->waiters);
 }
 
-void lock_init(lock* plock) {
+volatile void lock_init(lock* plock) {
     plock->holder = NULL;
     plock->holder_repeat_nr = 0;
     sema_init(&plock->semaphore, 1);    // The initial value of semaphore is 1.
@@ -29,7 +29,7 @@ void sema_down(semaphore* psema) {
         thread_block(TASK_BLOCKED);
     }
 
-    psema->value--;                 // Update semaphore value
+    (psema->value)--;                 // Update semaphore value
     ASSERT(psema->value == 0);      // The value should always be zero
     set_intr_status(old_status);    // Recover the interrupt status.
 }
@@ -43,9 +43,9 @@ void sema_up(semaphore* psema) {
     if (!list_empty(&psema->waiters)) {
         struct task_struct* thread_blocked = elem2entry(struct task_struct, \
                                              general_tag, list_pop(&psema->waiters));
-        thread_unblock(thread_block);
+        thread_unblock(thread_blocked);
     }
-    
+
     psema->value++;                 // Update semaphore value
     ASSERT(psema->value == 1);      // The value should be one
     set_intr_status(old_status);    // Recover the interrupt status
@@ -56,6 +56,7 @@ void lock_acquire(lock* plock) {
     /* Exclude the situation which the thread already hold a lock and haven't release it. */
     if (plock->holder != running_thread()) {    // Avoid dead lock!
         sema_down(&plock->semaphore);       // Down the semaphore, atom operation.
+        plock->holder = running_thread();
         ASSERT(plock->holder_repeat_nr == 0);
         plock->holder_repeat_nr = 1;
     } else {
@@ -72,7 +73,7 @@ void lock_release(lock* plock) {
     }
     ASSERT(plock->holder_repeat_nr == 1);
 
-    plock->holder == NULL;
-    plock->holder_repeat_nr == 0;
+    plock->holder = NULL;
+    plock->holder_repeat_nr = 0;
     sema_up(&plock->semaphore);
 }

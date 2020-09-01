@@ -2,7 +2,8 @@ CC = nasm
 LD = ld
 
 OBJECTS = start.o main.o scrn.o system.o idt.o interrupt.o time.o keyboard.o \
-		  debug.o string.o bitmap.o memory.o thread.o list.o printk.o
+		  debug.o string.o bitmap.o memory.o thread.o list.o printk.o sync.o \
+		  console.o
 
 CFLAGS = -Wall -fno-pie -O -fstrength-reduce -fomit-frame-pointer \
 		 -finline-functions -nostdinc -fno-builtin  -fno-stack-protector -m32
@@ -14,6 +15,7 @@ all: kernel.bin kernel.elf
 	gcc $(CFLAGS) -I./include -c -o main.o   	main.c 				
 	gcc $(CFLAGS) -I./include -c -o scrn.o   	./lib/scrn.c   		
 	gcc $(CFLAGS) -I./include -c -o list.o   	./lib/list.c   		
+	gcc $(CFLAGS) -I./include -c -o sync.o  	./lib/sync.c 		
 	gcc $(CFLAGS) -I./include -c -o debug.o  	./lib/debug.c  		
 	gcc $(CFLAGS) -I./include -c -o system.o 	./lib/system.c 		
 	gcc $(CFLAGS) -I./include -c -o printk.o 	./lib/printk.c 		
@@ -24,6 +26,7 @@ all: kernel.bin kernel.elf
 	gcc $(CFLAGS) -I./include -c -o thread.o    ./kernel/thread.c 
 	gcc $(CFLAGS) -I./include -c -o interrupt.o ./kernel/interrupt.c 
 	gcc $(CFLAGS) -I./include -c -o time.o 		./device/time.c 	
+	gcc $(CFLAGS) -I./include -c -o console.o 	./device/console.c 	
 	gcc $(CFLAGS) -I./include -c -o keyboard.o  ./device/keyboard.c 
 
 

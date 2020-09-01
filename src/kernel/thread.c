@@ -136,9 +136,10 @@ void thread_block(enum task_status status) {
     cur_task->status = status;
 
     schedule();
+    pic_init();
 
     // This status is set only when the thread is unblocked.
-    set_intr_status(status);
+    set_intr_status(intr_status);
 }
 
 /* Unblock the thread. */
