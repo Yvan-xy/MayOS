@@ -135,11 +135,11 @@ void irq_handler(struct regs *r) {
     *  IRQ, and then finally, run it */
 
     // log
-    // /*
+    /*
     if (r->int_no != 0x20) {
         LOG("int_no is: ", r->int_no);
     }
-    // */
+    */
 
     int idx = r->int_no - 32;
     handler = irq_routines[idx];

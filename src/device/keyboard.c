@@ -1,3 +1,4 @@
+#include <ioqueue.h>
 #include <interrupt.h>
 
 #define KB_DATA     0x60
@@ -21,6 +22,8 @@
 #define KB_IS_ESCAPE(sc)    (sc == 0xe0)
 
 static uint32_t kb_mode = 0;
+
+ioqueue kbd_buf;     // Ring buffer
 
 /* maybe scancode set 1 ?*/
 static char kb_map[128] = {
@@ -135,13 +138,12 @@ void kb_handler(struct regs *r) {
 
     /* read */
     sc = inportb(KB_DATA);
-    puts("kb_handler: sc: ");
-    put_int(sc);
-    ENDL;
+    // puts("kb_handler: sc: ");
+    // put_int(sc);
 
     /* is a escape char? */
     if (KB_IS_ESCAPE(sc)) {
-        puts("kb_handler: ESCAPE\n");
+        // puts("kb_handler: ESCAPE\n");
         kb_mode |= E0ESC;
         return;
     }
@@ -158,7 +160,7 @@ void kb_handler(struct regs *r) {
     }
 
     if (kb_mode & SHIFT) {
-        puts("kb_handler: SHIFT\n");
+        // puts("kb_handler: SHIFT\n");
 
         ch = kb_shift_map[sc & 0x7f];
     } else {
@@ -166,22 +168,22 @@ void kb_handler(struct regs *r) {
     }
 
     if (kb_mode & CTRL) {
-        puts("kb_handler: CTRL\n");
+        // puts("kb_handler: CTRL\n");
         switch(ch) {
         // console control char
         case 'd':
-            puts("kb_handler: EOF\n");
+            // puts("kb_handler: EOF\n");
             ch = TTY_EOF;
             break;
         case 'c':
-            puts("kb_handler: INT\n");
+            // puts("kb_handler: INT\n");
             ch = TTY_INT;
             break;
         }
     }
 
     if (kb_mode & ALT) {
-        puts("kb_handler: ALT\n");
+        // puts("kb_handler: ALT\n");
         /* nothing to do ? */
     }
 
@@ -192,13 +194,14 @@ void kb_handler(struct regs *r) {
     }
     /* on press */
     else if (ch != 0) {
-        puts("kb_handler: char: ");
-        putch(ch);
-        ENDL;
+        if (!is_full(&kbd_buf)) {
+            ioq_putchar(&kbd_buf, ch);
+        }
     }
 }
 
 void keyboard_init() {
     puts("Start install keyboard!\n");
+    ioqueue_init(&kbd_buf);
     irq_install_handler(1, kb_handler);
 }

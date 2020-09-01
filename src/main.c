@@ -4,6 +4,7 @@
 #include <thread.h>
 #include <system.h>
 #include <console.h>
+#include <keyboard.h>
 #include <interrupt.h>
 
 void k_thread_a(void*);
@@ -28,17 +29,10 @@ void main() {
 
     console_init();
 
-    thread_start("k_thread_a", 16, k_thread_a, "argA\n");
-    thread_start("k_thread_b", 16, k_thread_b, "argB\n");
+    thread_start("k_thread_a", 31, k_thread_a, " A_");
+    thread_start("k_thread_b", 31, k_thread_b, " B_");
 
     open_intr();
-    struct task_struct* task = running_thread();
-    while(1) {
-        console_put_str("Main\n");
-        console_put_str("Ticks: ");
-        console_put_int(task->ticks);
-        console_put_str("\n");
-    }
 
     for (;;);
 }
@@ -46,24 +40,24 @@ void main() {
 extern int timer_ticks;
 
 void k_thread_a(void* arg) {
-    char* para = arg;
-    struct task_struct* task = running_thread();
     while(1) {
-        console_put_str(para);
-        console_put_str("Ticks: ");
-        console_put_int(task->ticks);
-        console_put_str("\n");
+        INTR_STATUS old_status = close_intr();
+        if (!is_empty(&kbd_buf)) {
+            console_put_str(arg);
+            char byte = ioq_getchar(&kbd_buf);
+            console_put_char(byte);
+        }
+        set_intr_status(old_status);
     }
 }
 void k_thread_b(void* arg) {
-
-    char* para = arg;
-    struct task_struct* task = running_thread();
-
     while(1) {
-        console_put_str(para);
-        console_put_str("Ticks: ");
-        console_put_int(task->ticks);
-        console_put_str("\n");
+        INTR_STATUS old_status = close_intr();
+        if (!is_empty(&kbd_buf)) {
+            console_put_str(arg);
+            char byte = ioq_getchar(&kbd_buf);
+            console_put_char(byte);
+        }
+        set_intr_status(old_status);
     }
 }
