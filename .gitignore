@@ -7,7 +7,7 @@
 #log
 bochs.log
 snapshot.txt
-
+./src/kernel.*
 #bin
 bin
 *.elf
