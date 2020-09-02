@@ -37,7 +37,7 @@ enum pool_flags {
 #define PTE_IDX(addr)   ((addr & PTE_MASK) >> 12)   // Get middle 10 bits as PTE index
 
 struct virtual_addr {
-    bitmap vaddr_bitmap;
+    struct _bitmap vaddr_bitmap;
     uint32_t vaddr_start;
 };
 
@@ -50,6 +50,11 @@ static void* vaddr_get(enum pool_flags pf, uint32_t pg_cnt);
 static void* palloc(struct pool* m_pool);
 static void page_table_add(void* _vaddr, void* _page_phyaddr);
 void* malloc_page(enum pool_flags pf, uint32_t pg_cnt);
+
 void* get_kernel_pages(uint32_t pg_cnt);
+void* get_user_pages(uint32_t pg_cnt);
+void* get_a_page(enum pool_flags pf, uint32_t vaddr);
+
+uint32_t addr_v2p(uint32_t vaddr);
 
 #endif

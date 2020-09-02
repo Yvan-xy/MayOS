@@ -2,10 +2,14 @@
 #define MAY_THREAD_H
 
 #include <list.h>
+#include <memory.h>
 #include <stdint.h>
 #include <system.h>
 
 typedef void thread_func(void*);
+
+extern list thread_ready_list;              // Ready thread list
+extern list thread_all_list;
 
 enum task_status {
     TASK_RUNNING,
@@ -84,6 +88,9 @@ struct task_struct {
     list_elem all_list_tag;   // The node of thread_all_list
 
     uint32_t* pgdir;          // The virtual address of the page of the task it self
+
+    struct virtual_addr userprog_vaddr; // User process virtual address
+
     uint32_t stack_magic;     // stack eage mark, used for checking stack overflow
 };
 
@@ -96,6 +103,8 @@ struct task_struct* running_thread();
 void thread_init(void);
 void thread_block(enum task_status status);
 void thread_unblock(struct task_struct* pthread);
+void thread_create(struct task_struct* pthread, thread_func function, void* func_arg);
+void init_thread(struct task_struct* pthread, char* name, int prio);
 
 void schedule();
 

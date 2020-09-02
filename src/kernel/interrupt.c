@@ -134,7 +134,6 @@ void irq_handler(struct regs *r) {
     /* Find out if we have a custom handler to run for this
     *  IRQ, and then finally, run it */
 
-    // log
     /*
     if (r->int_no != 0x20) {
         LOG("int_no is: ", r->int_no);

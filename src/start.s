@@ -125,6 +125,8 @@ irq_common_stub:
     call eax
     pop eax
 
+global intr_exit
+intr_exit:   
     pop gs
     pop fs
     pop es

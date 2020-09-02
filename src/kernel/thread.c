@@ -2,6 +2,7 @@
 #include <thread.h>
 #include <memory.h>
 #include <printk.h>
+#include <process.h>
 #include <interrupt.h>
 
 #define PG_SIZE 4096
@@ -110,12 +111,16 @@ void schedule() {
         /* Do nothing */
     }
 
+
     ASSERT(!list_empty(&thread_ready_list));    // The ready list shouldn't be empty
     thread_tag = NULL;  // Clear the thread_tag
 
     thread_tag = list_pop(&thread_ready_list);
     struct task_struct* next = elem2entry(struct task_struct, general_tag, thread_tag);
     next->status = TASK_RUNNING;
+
+    process_activate(next);
+
     switch_to(cur, next);
 }
 

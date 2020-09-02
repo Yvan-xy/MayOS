@@ -1,8 +1,9 @@
+#include <sync.h>
 #include <debug.h>
-#include <memory.h>
 #include <bitmap.h>
 #include <system.h>
 #include <printk.h>
+#include <thread.h>
 
 #define PG_SIZE 4096
 
@@ -22,6 +23,7 @@ struct pool {
     bitmap pool_bitmap;         // Use bitmap to manage memory pool
     uint32_t phy_addr_start;    // The start phy_addr of this pool
     uint32_t pool_size;         // Memory size of the pool
+    lock lock;
 };
 
 struct pool kernel_pool, user_pool; // Memory pool for kernel and user
@@ -59,6 +61,7 @@ static void mem_pool_init(uint32_t all_memory) {
     kernel_pool.pool_size = kernel_free_pages * PG_SIZE;
     user_pool.pool_size   = user_free_pages * PG_SIZE;
 
+
     /* Set bitmap length */
     kernel_pool.pool_bitmap.bitmap_bytes_len = kbm_length;
     user_pool.pool_bitmap.bitmap_bytes_len   = ubm_length;
@@ -91,6 +94,9 @@ static void mem_pool_init(uint32_t all_memory) {
     /* Clear bitmaps */
     bitmap_init(&kernel_pool.pool_bitmap);
     bitmap_init(&user_pool.pool_bitmap);
+
+    lock_init( &kernel_pool.lock );
+    lock_init( &user_pool.lock );
 
     // Init kernel virtual address bitmap
     kernel_vaddr.vaddr_bitmap.bitmap_bytes_len = kbm_length;
@@ -137,7 +143,23 @@ static void* vaddr_get(enum pool_flags pf, uint32_t pg_cnt) {
 
         vaddr_start = kernel_vaddr.vaddr_start + bit_idx_start * PG_SIZE;
     } else {    // User process
+        struct task_struct* cur_thread = running_thread();
 
+        /* Search for continuous pages */
+        bit_idx_start = bitmap_scan(&cur_thread->userprog_vaddr.vaddr_bitmap, pg_cnt);
+
+        if (bit_idx_start == -1) {  // if failed, return NULL
+            return NULL;
+        }
+
+        /* Set these bits to 1 */
+        while (cnt < pg_cnt) {
+            bitmap_set(&cur_thread->userprog_vaddr.vaddr_bitmap,
+                       bit_idx_start + cnt++, 1);
+        }
+
+        vaddr_start = cur_thread->userprog_vaddr.vaddr_start + bit_idx_start * PG_SIZE;
+        ASSERT((uint32_t)vaddr_start < (0xc0000000 - PG_SIZE));
     }
     return (void*)vaddr_start;
 }
@@ -236,9 +258,67 @@ void* malloc_page(enum pool_flags pf, uint32_t pg_cnt) {
  *  return NULL if failed
  */
 void* get_kernel_pages(uint32_t pg_cnt) {
+    lock_acquire(&kernel_pool.lock);
     void* vaddr = malloc_page(PF_KERNEL, pg_cnt);
     if (vaddr != NULL) {
         memset(vaddr, 0, pg_cnt * PG_SIZE);
     }
+    lock_release(&kernel_pool.lock);
     return vaddr;
+}
+
+/* Apply one page from user pool
+ *  return vaddr if success
+ *  return NULL if failed
+ */
+void* get_user_pages(uint32_t pg_cnt) {
+    lock_acquire(&user_pool.lock);
+    void* vaddr = malloc_page(PF_USER, pg_cnt);
+    if (vaddr != NULL) {
+        memset(vaddr, 0, pg_cnt * PG_SIZE);
+    }
+    lock_release(&user_pool.lock);
+    return vaddr;
+}
+
+/* Map the virtual to the physical address from the pool. */
+void* get_a_page(enum pool_flags pf, uint32_t vaddr) {
+    /* Choose the memory pool according to the pool_flag. */
+    struct pool* mem_pool = pf & PF_KERNEL ? &kernel_pool : &user_pool;
+    lock_acquire(&mem_pool->lock);
+
+    /* Set the virtual bitmap to 1. */
+    struct task_struct* cur_task = running_thread();
+    int32_t bit_idx = -1;
+
+    if (cur_task->pgdir != NULL && pf == PF_USER) {     // User mode
+        bit_idx = (vaddr - cur_task->userprog_vaddr.vaddr_start) / PG_SIZE;
+        ASSERT(bit_idx > 0);
+        bitmap_set(&cur_task->userprog_vaddr.vaddr_bitmap, bit_idx, 1);
+    } else if (cur_task->pgdir == NULL && pf == PF_KERNEL) {    // Kernel mode
+        bit_idx = (vaddr - kernel_vaddr.vaddr_start) / PG_SIZE;
+        ASSERT(bit_idx > 0);
+        bitmap_set(&kernel_vaddr.vaddr_bitmap, bit_idx, 1);
+    } else {
+        PANIC("get_a_page: Not allow kernel alloc userspace or user alloc kernel space by get_a_page\n");
+    }
+
+    void* page_phyaddr = palloc(mem_pool);
+    if (page_phyaddr == NULL) {
+        lock_release(&mem_pool->lock);
+        return NULL;
+    }
+
+    page_table_add((void*)vaddr, page_phyaddr);
+    lock_release(&mem_pool->lock);
+    return (void*)vaddr;
+}
+
+/* Map the virtual address to the physical address. */
+uint32_t addr_v2p(uint32_t vaddr) {
+    /* Get the PTE address. */
+    uint32_t* pte = pte_ptr(vaddr);
+
+    /* Clear the attribute bits and add the low 12 bits. */
+    return((*pte & 0xfffff000) + (vaddr & 0x00000fff));
 }
