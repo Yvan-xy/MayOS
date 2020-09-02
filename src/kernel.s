@@ -418,12 +418,12 @@ c0001745:	5e                   	pop    %esi
 c0001746:	83 ec 0c             	sub    $0xc,%esp
 c0001749:	83 ec 0c             	sub    $0xc,%esp
 c000174c:	68 2c 44 00 c0       	push   $0xc000442c
-c0001751:	e8 2e 26 00 00       	call   c0003d84 <console_put_str>
+c0001751:	e8 3b 03 00 00       	call   c0001a91 <puts>
 c0001756:	83 c4 04             	add    $0x4,%esp
 c0001759:	ff 35 04 80 00 c0    	pushl  0xc0008004
-c000175f:	e8 68 26 00 00       	call   c0003dcc <console_put_int>
+c000175f:	e8 6a 03 00 00       	call   c0001ace <put_int>
 c0001764:	c7 04 24 32 44 00 c0 	movl   $0xc0004432,(%esp)
-c000176b:	e8 14 26 00 00       	call   c0003d84 <console_put_str>
+c000176b:	e8 21 03 00 00       	call   c0001a91 <puts>
 c0001770:	83 c4 10             	add    $0x10,%esp
 c0001773:	eb d4                	jmp    c0001749 <k_thread_a+0x9>
 
@@ -434,12 +434,12 @@ c000177a:	5e                   	pop    %esi
 c000177b:	83 ec 0c             	sub    $0xc,%esp
 c000177e:	83 ec 0c             	sub    $0xc,%esp
 c0001781:	68 34 44 00 c0       	push   $0xc0004434
-c0001786:	e8 f9 25 00 00       	call   c0003d84 <console_put_str>
-c000178b:	c7 04 24 32 44 00 c0 	movl   $0xc0004432,(%esp)
-c0001792:	e8 ed 25 00 00       	call   c0003d84 <console_put_str>
-c0001797:	83 c4 04             	add    $0x4,%esp
-c000179a:	ff 35 00 80 00 c0    	pushl  0xc0008000
-c00017a0:	e8 27 26 00 00       	call   c0003dcc <console_put_int>
+c0001786:	e8 06 03 00 00       	call   c0001a91 <puts>
+c000178b:	83 c4 04             	add    $0x4,%esp
+c000178e:	ff 35 00 80 00 c0    	pushl  0xc0008000
+c0001794:	e8 35 03 00 00       	call   c0001ace <put_int>
+c0001799:	c7 04 24 32 44 00 c0 	movl   $0xc0004432,(%esp)
+c00017a0:	e8 ec 02 00 00       	call   c0001a91 <puts>
 c00017a5:	83 c4 10             	add    $0x10,%esp
 c00017a8:	eb d4                	jmp    c000177e <k_thread_b+0x9>
 
@@ -2794,7 +2794,7 @@ c0003475:	83 c4 10             	add    $0x10,%esp
 c0003478:	eb c1                	jmp    c000343b <schedule+0x9a>
 c000347a:	68 40 6d 00 c0       	push   $0xc0006d40
 c000347f:	68 6c 46 00 c0       	push   $0xc000466c
-c0003484:	6a 72                	push   $0x72
+c0003484:	6a 73                	push   $0x73
 c0003486:	68 f9 72 00 c0       	push   $0xc00072f9
 c000348b:	e8 98 f0 ff ff       	call   c0002528 <panic_spin>
 c0003490:	83 c4 10             	add    $0x10,%esp
@@ -2836,7 +2836,7 @@ c00034fb:	5e                   	pop    %esi
 c00034fc:	c3                   	ret    
 c00034fd:	68 60 6d 00 c0       	push   $0xc0006d60
 c0003502:	68 5c 46 00 c0       	push   $0xc000465c
-c0003507:	68 87 00 00 00       	push   $0x87
+c0003507:	68 88 00 00 00       	push   $0x88
 c000350c:	68 f9 72 00 c0       	push   $0xc00072f9
 c0003511:	e8 12 f0 ff ff       	call   c0002528 <panic_spin>
 c0003516:	83 c4 10             	add    $0x10,%esp
@@ -2866,7 +2866,7 @@ c000354b:	5f                   	pop    %edi
 c000354c:	c3                   	ret    
 c000354d:	68 b4 6d 00 c0       	push   $0xc0006db4
 c0003552:	68 4c 46 00 c0       	push   $0xc000464c
-c0003557:	68 9b 00 00 00       	push   $0x9b
+c0003557:	68 9c 00 00 00       	push   $0x9c
 c000355c:	68 f9 72 00 c0       	push   $0xc00072f9
 c0003561:	e8 c2 ef ff ff       	call   c0002528 <panic_spin>
 c0003566:	83 c4 10             	add    $0x10,%esp
@@ -2895,14 +2895,14 @@ c00035ad:	83 c4 10             	add    $0x10,%esp
 c00035b0:	eb 8b                	jmp    c000353d <thread_unblock+0x22>
 c00035b2:	68 14 6e 00 c0       	push   $0xc0006e14
 c00035b7:	68 4c 46 00 c0       	push   $0xc000464c
-c00035bc:	68 9f 00 00 00       	push   $0x9f
+c00035bc:	68 a0 00 00 00       	push   $0xa0
 c00035c1:	68 f9 72 00 c0       	push   $0xc00072f9
 c00035c6:	e8 5d ef ff ff       	call   c0002528 <panic_spin>
 c00035cb:	83 c4 10             	add    $0x10,%esp
 c00035ce:	eb b3                	jmp    c0003583 <thread_unblock+0x68>
 c00035d0:	68 4c 6e 00 c0       	push   $0xc0006e4c
 c00035d5:	68 4c 46 00 c0       	push   $0xc000464c
-c00035da:	68 a1 00 00 00       	push   $0xa1
+c00035da:	68 a2 00 00 00       	push   $0xa2
 c00035df:	68 f9 72 00 c0       	push   $0xc00072f9
 c00035e4:	e8 3f ef ff ff       	call   c0002528 <panic_spin>
 c00035e9:	83 c4 10             	add    $0x10,%esp

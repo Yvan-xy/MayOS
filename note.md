@@ -43,3 +43,26 @@ void sema_down(semaphore* psema) {
 
 #### 2020.9.1
 遇到了几个贼坑的bug，传参的时候打错了。。。裂开。目前这个运行状态还是有些神奇，每一个线程都会运行很久然后才切到下一个线程。
+
+#### 2020.9.2
+今天遇到一个贼蛋疼的问题，我再main函数里起了两个这样的线程：
+```c
+void k_thread_a(void* arg) {
+    char* parg = arg;
+    while(1) {
+        console_put_str("v_a: ");
+        console_put_int(test_var_a);
+        console_put_str("\n");
+    }
+}
+
+void k_thread_b(void* arg) {
+    char* parg = arg;
+    while(1) {
+        console_put_str("v_b: ");
+        console_put_int(test_var_b);
+        console_put_str("\n");
+    }
+}
+```
+这个`console_put_str()`和`console_put_int()`会先去申请screen的锁，然后puts后release这个锁，所以你会看到这个线程AB一直在抢这个锁。由于线程A首先运行，等他的ticks到了之后，被换下，然而他并没有释放锁，导致线程B直接进入锁的wait队列，等A释放锁之后，B又被加入了Ready队列，如此往复，导致B一直在wait和ready队列里徘徊。他只能趁A不注意把锁抢过来。所以AB的运行时间就贼长。如果直接用`puts()`输出就和谐的一批。

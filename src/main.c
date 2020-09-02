@@ -48,18 +48,18 @@ static void init_all() {
 void k_thread_a(void* arg) {
     char* parg = arg;
     while(1) {
-        console_put_str("v_a: ");
-        console_put_int(test_var_a);
-        console_put_str("\n");
+        puts("v_a: ");
+        put_int(test_var_a);
+        puts("\n");
     }
 }
 
 void k_thread_b(void* arg) {
     char* parg = arg;
     while(1) {
-        console_put_str("v_b: ");
-        console_put_int(test_var_b);
-        console_put_str("\n");
+        puts("v_b: ");
+        put_int(test_var_b);
+        puts("\n");
     }
 }
 
