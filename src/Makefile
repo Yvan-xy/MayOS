@@ -3,7 +3,7 @@ LD = ld
 
 OBJECTS = start.o main.o scrn.o system.o idt.o interrupt.o time.o keyboard.o \
 		  debug.o string.o bitmap.o memory.o thread.o list.o printk.o sync.o \
-		  console.o ioqueue.o tss.o process.o
+		  console.o ioqueue.o tss.o process.o syscall.o
 
 CFLAGS = -Wall -fno-pie -O -fstrength-reduce -fomit-frame-pointer \
 		 -finline-functions -nostdinc -fno-builtin  -fno-stack-protector -m32
@@ -25,6 +25,7 @@ all: kernel.bin kernel.elf
 	gcc $(CFLAGS) -I./include -c -o bitmap.o 	./kernel/bitmap.c 		
 	gcc $(CFLAGS) -I./include -c -o memory.o    ./kernel/memory.c 
 	gcc $(CFLAGS) -I./include -c -o thread.o    ./kernel/thread.c 
+	gcc $(CFLAGS) -I./include -c -o syscall.o   ./kernel/syscall.c 
 	gcc $(CFLAGS) -I./include -c -o process.o   ./kernel/process.c 
 	gcc $(CFLAGS) -I./include -c -o interrupt.o ./kernel/interrupt.c 
 	gcc $(CFLAGS) -I./include -c -o time.o 		./device/time.c 	

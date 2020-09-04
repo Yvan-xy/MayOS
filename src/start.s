@@ -135,6 +135,31 @@ intr_exit:
     add esp, 8
     iret
 
+
+extern syscall_table
+global _syscall
+_syscall:
+    push 0
+    push 0x80
+    jump syscall_stub
+
+syscall_stub:
+    pusha
+    push ds
+    push es
+    push fs
+    push gs
+
+    push edx    ; push arguments 3
+    push ecx    ; push arguments 2
+    push ebx    ; push arguments 1
+
+    call [syscall_table + eax * 4]  ; Call int function
+    add esp, 12                     ; Get through ebx, ecx, edx
+    mov [esp + 11*4], eax           ; gs,fs,ex,ds,edi,esi,ebp,esp,ebx,edx,ecx
+    jmp intr_exit
+
+
 global switch_to
 switch_to:
     push esi 

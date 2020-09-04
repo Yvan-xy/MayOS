@@ -1,5 +1,6 @@
 #include <idt.h>
 #include <printk.h>
+#include <syscall.h>
 #include <interrupt.h>
 
 /* Use this function to set an entry in the IDT. Alot simpler
@@ -87,6 +88,9 @@ void idt_install() {
 
     /* Init IRQS */
     irq_install();
+
+    /* Syscall ISR Init */
+    sys_init();
 
     // Install time interrupt 0x32
     timer_init();
