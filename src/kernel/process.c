@@ -87,7 +87,7 @@ void process_execute(void* filename, char* name) {
     create_user_vaddr_bitmap(thread);
     thread_create(thread, start_process, filename);
     thread->pgdir = create_page_dir();
-    
+
     INTR_STATUS old_status = close_intr();
     ASSERT(!elem_find(&thread_ready_list, &thread->general_tag));
     list_append(&thread_ready_list, &thread->general_tag);

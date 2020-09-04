@@ -4,6 +4,7 @@
 #include <memory.h>
 #include <thread.h>
 #include <system.h>
+#include <syscall.h>
 #include <console.h>
 #include <process.h>
 #include <keyboard.h>
@@ -14,20 +15,22 @@ void k_thread_b(void*);
 void u_prog_a(void);
 void u_prog_b(void);
 
-int test_var_a = 0, test_var_b = 0;
+int prog_a_pid = 0, prog_b_pid = 0;
 
 static void init_all();
 
 void main() {
     init_all();
 
-    thread_start("k_thread_a", 31, k_thread_a, "argA ");
-    thread_start("k_thread_b", 31, k_thread_b, "argB ");
     process_execute(u_prog_a, "user_prog_a");
     process_execute(u_prog_b, "user_prog_b");
 
     open_intr();
-
+    puts(" main_pid: ");
+    put_int(sys_getpid());
+    putch('\n');
+    thread_start("k_thread_a", 31, k_thread_a, "argA ");
+    thread_start("k_thread_b", 31, k_thread_b, "argB ");
     for (;;);
 }
 
@@ -47,33 +50,35 @@ static void init_all() {
 
 void k_thread_a(void* arg) {
     char* parg = arg;
-    while(1) {
-        puts("v_a: ");
-        put_int(test_var_a);
-        puts("\n");
-    }
+    puts(" thread_a_pid: ");
+    put_int(sys_getpid());
+    putch('\n');
+    puts(" prog_a_pid: ");
+    put_int(prog_a_pid);
+    putch('\n');
+    while(1);
 }
 
 void k_thread_b(void* arg) {
     char* parg = arg;
-    while(1) {
-        puts("v_b: ");
-        put_int(test_var_b);
-        puts("\n");
-    }
+    puts(" thread_b_pid: ");
+    put_int(sys_getpid());
+    putch('\n');
+    puts(" prog_b_pid: ");
+    put_int(prog_b_pid);
+    putch('\n');
+    while(1);
 }
 
 #pragma GCC push_options
 #pragma GCC optimize ("O0")
-volatile void u_prog_a(void) {
-    while (1) {
-        test_var_a += 1;
-    }
+void u_prog_a(void) {
+    prog_a_pid = getpid();
+    while(1);
 }
 
-volatile void u_prog_b(void) {
-    while (1) {
-        test_var_b += 1;
-    }
+void u_prog_b(void) {
+    prog_b_pid = getpid();
+    while(1);
 }
 #pragma GCC pop_options

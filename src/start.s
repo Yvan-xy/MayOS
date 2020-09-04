@@ -141,7 +141,7 @@ global _syscall
 _syscall:
     push 0
     push 0x80
-    jump syscall_stub
+    jmp syscall_stub
 
 syscall_stub:
     pusha

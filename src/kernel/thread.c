@@ -1,3 +1,4 @@
+#include <sync.h>
 #include <debug.h>
 #include <thread.h>
 #include <memory.h>
@@ -14,6 +15,15 @@ static list_elem* thread_tag;        // Save the node of the list
 
 extern void switch_to(struct task_struct* cur, struct task_struct* next);
 
+lock pid_lock;
+
+static uint16_t allocate_pid(void) {
+    static uint16_t next_pid = 0;
+    lock_acquire(&pid_lock);
+    next_pid++;
+    lock_release(&pid_lock);
+    return next_pid;
+}
 
 /* Get the PCB pointer of the current task. */
 struct task_struct* running_thread() {
@@ -55,6 +65,7 @@ void thread_create(struct task_struct* pthread,
 /* Init the thread, set the priority and ticks, init the stack pointer and status. */
 void init_thread(struct task_struct* pthread, char* name, int prio) {
     memset(pthread, 0, sizeof(struct task_struct));
+    pthread->pid = allocate_pid();
     strcpy(pthread->name, name);
     if (pthread == main_thread) {
         pthread->status = TASK_RUNNING;
@@ -127,6 +138,7 @@ void schedule() {
 void thread_init(void) {
     list_init(&thread_all_list);
     list_init(&thread_ready_list);
+    lock_init(&pid_lock);
     make_main_thread();
 }
 

@@ -77,6 +77,7 @@ struct thread_stack {
 /* PCB(Process Control Block) of process or thread. */
 struct task_struct {
     uint32_t* self_kstack;
+    uint16_t pid;
     enum task_status status;
     char name[16];
     uint8_t priority;         // Priority of threads
