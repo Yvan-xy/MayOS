@@ -56,7 +56,6 @@ static struct gdt_desc make_gdt_desc(uint32_t *desc_addr, uint32_t limit,
 
 // create tss in gdt, and reload gdt
 void tss_init() {
-    puts("tss_init start\n");
     uint32_t tss_size = sizeof(tss);
     memset(&tss, 0, tss_size);
     tss.ss0 = SELECTOR_K_STACK;
@@ -79,5 +78,4 @@ void tss_init() {
         ((8 * 7 - 1) | ((uint64_t)(uint32_t)0xc0000900 << 16)); // 7 descriptor size
     asm volatile("lgdt %0" : : "m"(gdt_operand));
     asm volatile("ltr %w0" : : "r"(SELECTOR_TSS));
-    puts("tss_init and ltr done\n");
 }

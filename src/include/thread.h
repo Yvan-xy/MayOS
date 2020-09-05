@@ -90,7 +90,8 @@ struct task_struct {
 
     uint32_t* pgdir;          // The virtual address of the page of the task it self
 
-    struct virtual_addr userprog_vaddr; // User process virtual address
+    struct virtual_addr userprog_vaddr;     // User process virtual address
+    mem_block_desc u_block_desc[DESC_CNT];  // User memory block descriptor
 
     uint32_t stack_magic;     // stack eage mark, used for checking stack overflow
 };

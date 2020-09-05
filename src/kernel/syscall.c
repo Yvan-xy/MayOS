@@ -1,5 +1,7 @@
 #include <idt.h>
 #include <thread.h>
+#include <memory.h>
+#include <console.h>
 #include <syscall.h>
 #include <interrupt.h>
 
@@ -48,7 +50,27 @@ uint32_t getpid(void) {
     return _syscall0(SYS_GETPID);
 }
 
+uint32_t sys_write(char *str) {
+    console_put_str(str);
+    return strlen(str);
+}
+
+uint32_t write(char* str) {
+    return _syscall1(SYS_WRITE, str);
+}
+
+void* malloc(uint32_t size) {
+    return (void*)_syscall1(SYS_MALLOC, size);
+}
+
+void free(void* ptr) {
+    _syscall1(SYS_FREE, ptr);
+}
+
 void sys_init() {
     idt_set_gate(ISR_SYSCALL, (unsigned)_syscall, SELECTOR_K_CODE, 0xEF);
     syscall_table[SYS_GETPID] = sys_getpid;
+    syscall_table[SYS_WRITE]  = sys_write;
+    syscall_table[SYS_MALLOC] = sys_malloc;
+    syscall_table[SYS_FREE]   = sys_free;
 }

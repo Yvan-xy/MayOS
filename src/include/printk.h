@@ -1,6 +1,8 @@
 #ifndef _MAY_PRINTK_H
 #define _MAY_PRINTK_H
 
+#include <stdint.h>
+
 // From OS67
 // https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html
 // waiting for fixing, issue #2
@@ -17,6 +19,8 @@ typedef char* va_list;
 void vsprintf(char *buf, const char *fmt, va_list args);
 
 void printk(const char *fmt, ...);
+uint32_t printf(const char *fmt, ...);
+uint32_t sprintf(char *buf, const char* fmt, ...);
 void LOG(const char *info, unsigned int data);
 
 #endif

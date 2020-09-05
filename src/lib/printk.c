@@ -1,6 +1,7 @@
 #include <printk.h>
 #include <system.h>
-#include <stdint.h>
+#include <syscall.h>
+#include <console.h>
 
 char* itoa(int value, char *str, int radix) {
     char reverse[36];
@@ -123,14 +124,34 @@ void vsprintf(char *buf, const char *fmt, va_list args) {
 
 void printk(const char *fmt, ...) {
     //使用static会给调试带来麻烦
-    char buf[256];
+    char buf[1024];
     va_list args;
 
     memset(buf, 0, sizeof(buf));
     va_start(args, fmt);
     vsprintf(buf, fmt, args);
     va_end(args);
-    puts(buf);
+    console_put_str(buf);
+}
+
+uint32_t printf(const char *fmt, ...) {
+    char buf[1024];
+    va_list args;
+
+    memset(buf, 0, sizeof(buf));
+    va_start(args, fmt);
+    vsprintf(buf, fmt, args);
+    va_end(args);
+    return write(buf);
+}
+
+uint32_t sprintf(char* buf, const char* fmt, ...) {
+    va_list args;
+    uint32_t retval;
+    va_start(args, fmt);
+    vsprintf(buf, fmt, args);
+    va_end(args);
+    return strlen(buf);
 }
 
 void LOG(const char* info, unsigned int data) {

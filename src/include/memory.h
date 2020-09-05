@@ -1,6 +1,7 @@
 #ifndef MAY_MEMORY_H
 #define MAY_MEMORY_H
 
+#include <list.h>
 #include <bitmap.h>
 #include <stdint.h>
 
@@ -41,8 +42,27 @@ struct virtual_addr {
     uint32_t vaddr_start;
 };
 
+typedef struct _mem_block {
+    list_elem free_elem;
+} mem_block;
+
+typedef struct _mem_block_desc {
+    uint32_t block_size;            // Size of the memory block
+    uint32_t blocks_per_arena;      // The block number of the arena
+    list free_list;                 // Free mem_block list
+} mem_block_desc;
+
+typedef struct _arena {
+    mem_block_desc* desc;           // The descriptor of the arena
+    uint32_t cnt;                   // The number of free mem_block
+    int large;
+} arena;
+
+#define DESC_CNT 7                  // Number of descriptors 16 ~ 1024
+
 extern struct pool kernel_pool, user_pool;
 void mem_init(void);
+void block_desc_init(mem_block_desc* desc_array);
 
 uint32_t* pte_ptr(uint32_t vaddr);
 uint32_t* pde_ptr(uint32_t vaddr);
@@ -55,6 +75,13 @@ void* get_kernel_pages(uint32_t pg_cnt);
 void* get_user_pages(uint32_t pg_cnt);
 void* get_a_page(enum pool_flags pf, uint32_t vaddr);
 
+void pfree(uint32_t pg_phy_addr);
+void page_table_pte_remove(uint32_t vaddr);
+void vaddr_remove(enum pool_flags pf, void* _vaddr, uint32_t pg_cnt);
+
 uint32_t addr_v2p(uint32_t vaddr);
+
+void* sys_malloc(uint32_t size);
+void sys_free(void* ptr);
 
 #endif

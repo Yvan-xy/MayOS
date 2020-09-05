@@ -201,7 +201,6 @@ void kb_handler(struct regs *r) {
 }
 
 void keyboard_init() {
-    puts("Start install keyboard!\n");
     ioqueue_init(&kbd_buf);
     irq_install_handler(1, kb_handler);
 }
