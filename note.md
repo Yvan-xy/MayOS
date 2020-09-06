@@ -78,3 +78,6 @@ void k_thread_b(void* arg) {
 每个arena包含一个元数据，指向对应size的descriptor，descriptor里记录了同类arena的信息，以及可用的free_list.arena剩下的内存用来放block，block会包含一个`mem_block_desc`结构体，用来维护free list，是不是有内味了？😂
 
 然后就是free的过程，free要把virtual和physical的bitmap记得清零，然后就是在remove_page的时候要把pte给删了，这里是直接把P为清零，让他直接无效了。然后就是把对应的block插入到freelist中，如果一个arena的所有block都是空的，那么就把arena释放掉。
+
+#### 2020.9.6
+今日去北医三院看病，摸了
