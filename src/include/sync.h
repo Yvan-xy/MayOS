@@ -20,4 +20,7 @@ void lock_init(lock* plock);
 void lock_acquire(lock* plock);
 void lock_release(lock* plock);
 
+void sema_up(semaphore* psema);
+void sema_down(semaphore* psema);
+volatile void sema_init(semaphore* psema, uint8_t value);
 #endif

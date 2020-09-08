@@ -9,6 +9,7 @@
 #define PG_SIZE 4096
 
 struct task_struct* main_thread;     // PCB of the main thread
+struct task_struct* idle_thread;     // idle thread
 list thread_ready_list;              // Ready thread list
 list thread_all_list;                // All thread list
 static list_elem* thread_tag;        // Save the node of the list
@@ -16,6 +17,14 @@ static list_elem* thread_tag;        // Save the node of the list
 extern void switch_to(struct task_struct* cur, struct task_struct* next);
 
 lock pid_lock;
+
+
+static void idle(void* arg UNUSED) {
+    while(1) {
+        thread_block(TASK_BLOCKED);
+        __asm__ __volatile__ ("sti; hlt" : : : "memory");
+    }
+}
 
 static uint16_t allocate_pid(void) {
     static uint16_t next_pid = 0;
@@ -37,7 +46,7 @@ struct task_struct* running_thread() {
  * to reinit.
  */
 static void kernel_thread(thread_func* function, void* func_arg) {
-    pic_init();
+    // pic_init();
     open_intr();
     function(func_arg);
 }
@@ -122,6 +131,10 @@ void schedule() {
         /* Do nothing */
     }
 
+    // if no running thread, then unblock idle
+    if (list_empty(&thread_ready_list)) {
+        thread_unblock(idle_thread);
+    }
 
     ASSERT(!list_empty(&thread_ready_list));    // The ready list shouldn't be empty
     thread_tag = NULL;  // Clear the thread_tag
@@ -140,6 +153,8 @@ void thread_init(void) {
     list_init(&thread_ready_list);
     lock_init(&pid_lock);
     make_main_thread();
+
+    idle_thread = thread_start("idle", 10, idle, NULL);
 }
 
 /* Block the thread. */
@@ -153,7 +168,7 @@ void thread_block(enum task_status status) {
     cur_task->status = status;
 
     schedule();
-    pic_init();
+    // pic_init();
 
     // This status is set only when the thread is unblocked.
     set_intr_status(intr_status);
@@ -179,4 +194,15 @@ void thread_unblock(struct task_struct* pthread) {
         pthread->status = TASK_READY;   // Update its status to TASK_READY.
     }
     set_intr_status(intr_status);   // Recover the interrupt status.
+}
+
+// yield thread, release CPU and switch to other thread
+void thread_yield(void) {
+    struct task_struct* cur = running_thread();
+    INTR_STATUS old_status = close_intr();
+    ASSERT(!elem_find(&thread_ready_list, &cur->general_tag));
+    list_append(&thread_ready_list, &cur->general_tag);
+    cur->status = TASK_READY;
+    schedule();
+    set_intr_status(old_status);
 }

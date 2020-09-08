@@ -64,6 +64,10 @@ isr_common_stub:
     push fs
     push gs
     
+    mov al, 0x20    ; send EOI
+    out 0xa0, al
+    out 0x20, al
+
     mov ax, 0x10   ; kernel data selector
     mov ds, ax
     mov es, ax
@@ -112,6 +116,10 @@ irq_common_stub:
     push es
     push fs
     push gs
+
+    mov al, 0x20    ; send EOI
+    out 0xa0, al
+    out 0x20, al
 
     mov ax,0x10
     mov ds, ax

@@ -3,6 +3,9 @@
 #include <printk.h>
 #include <interrupt.h>
 
+#define IRQ0_FREQUENCY          100
+#define mil_seconds_per_intr    (1000 / IRQ0_FREQUENCY)
+
 void timer_phase(int hz) {
     int divisor = 1193180 / hz;       /* Calculate our divisor */
     outportb(0x43, 0x36);             /* Set our command byte 0x34 */
@@ -46,10 +49,17 @@ void timer_install() {
     irq_install_handler(0, timer_handler);
 }
 
-void sleep(int ticks) {
-    int eticks;
-    eticks = ticks + timer_ticks;
-    while(timer_ticks<eticks);
+void ticks_to_sleep(uint32_t sleep_ticks) {
+    uint32_t start_tick = timer_ticks;
+    while (timer_ticks - start_tick < sleep_ticks) {
+        thread_yield();
+    }
+}
+
+void mtime_sleep(uint32_t m_seconds) {
+    uint32_t sleep_ticks = DIV_ROUND_UP(m_seconds, mil_seconds_per_intr);
+    ASSERT(sleep_ticks > 0);
+    ticks_to_sleep(sleep_ticks);
 }
 
 void timer_init() {

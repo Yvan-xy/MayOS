@@ -540,7 +540,7 @@ void sys_free(void* ptr) {
         arena* arena_ = block2arena(block);
 
         ASSERT(arena_->large == 0 || arena_->large == 1);
-        
+
         /* Free all pages if it is large block,
          * recovery the block to free list if it is not large block.
          */

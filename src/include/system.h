@@ -76,6 +76,7 @@ struct gdt_desc {
 
 #define __CONCAT(x, y) x ## y
 #define __STRING(x) #x
+#define UNUSED __attribute__((unused))
 
 #define ENDL puts("\n")
 
@@ -87,6 +88,29 @@ extern unsigned char *memset(unsigned char *dest, unsigned char val, int count);
 extern unsigned short *memsetw(unsigned short *dest, unsigned short val, int count);
 extern unsigned char inportb (unsigned short _port);
 extern void outportb (unsigned short _port, unsigned char _data);
+
+static inline void insw(uint16_t port, void* addr, uint32_t word_cnt) {
+    //insw asm write 16bit from port to es:edi mem
+    asm volatile ("cld; rep insw"
+                  : "+D" (addr), "+c" (word_cnt)
+                  : "d" (port) : "memory"
+                 );
+
+}
+
+// write to port
+// write word_cnt word from addr to port
+static inline void outsw(uint16_t port,const void *addr,uint32_t word_cnt) {
+    /*
+        + means both input and output
+        outsw asm write ds:esi 16bit to port
+        */
+    asm volatile ("cld; rep outsw"
+                  : "+S" (addr), "+c" (word_cnt)
+                  : "d" (port)
+                 );
+
+}
 
 /* This defines what the stack looks like after an ISR was running */
 struct regs {

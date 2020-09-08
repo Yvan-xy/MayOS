@@ -62,7 +62,8 @@ INTR_STATUS set_intr_status(INTR_STATUS status);
 void timer_phase(int hz);
 void timer_handler(struct regs *r);
 void timer_init();
-void sleep(int ticks);
+void ticks_to_sleep(uint32_t sleep_ticks);
+void mtime_sleep(uint32_t m_seconds);
 
 /* KeyBoard Device */
 void keyboard_init();

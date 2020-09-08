@@ -103,6 +103,7 @@ struct task_struct* thread_start(char* name, int prio,
 struct task_struct* running_thread();
 
 void thread_init(void);
+void thread_yield(void);
 void thread_block(enum task_status status);
 void thread_unblock(struct task_struct* pthread);
 void thread_create(struct task_struct* pthread, thread_func function, void* func_arg);

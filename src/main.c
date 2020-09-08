@@ -1,3 +1,4 @@
+#include <ide.h>
 #include <tss.h>
 #include <debug.h>
 #include <printk.h>
@@ -23,10 +24,6 @@ void main() {
     init_all();
 
     open_intr();
-    process_execute(u_prog_a, "u_prog_a");
-    process_execute(u_prog_b, "u_prog_b");
-    thread_start("k_thread_a", 31, k_thread_a, "I'm thread A ");
-    thread_start("k_thread_b", 31, k_thread_b, "I'm thread B ");
     for (;;);
 }
 
@@ -37,6 +34,7 @@ static void init_all() {
     thread_init();
     console_init();
     tss_init();
+    ide_init();
 
     printk("MayOS\n");
     settextcolor(CYAN, BLACK);
