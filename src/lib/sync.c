@@ -1,6 +1,6 @@
-#include <sync.h>
-#include <debug.h>
-#include <interrupt.h>
+#include <lib/sync.h>
+#include <lib/debug.h>
+#include <kernel/interrupt.h>
 
 volatile void sema_init(semaphore* psema, uint8_t value) {
     psema->value = value & 0xff;

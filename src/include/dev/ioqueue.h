@@ -1,9 +1,9 @@
 #ifndef MAY_IOQUEUE_H
 #define MAY_IOQUEUE_H
 
-#include <sync.h>
+#include <lib/sync.h>
 #include <stdint.h>
-#include <thread.h>
+#include <kernel/thread.h>
 
 #define BUFSIZE 64
 

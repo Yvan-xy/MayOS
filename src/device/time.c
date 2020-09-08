@@ -1,7 +1,7 @@
-#include <debug.h>
-#include <thread.h>
-#include <printk.h>
-#include <interrupt.h>
+#include <lib/debug.h>
+#include <kernel/thread.h>
+#include <lib/printk.h>
+#include <kernel/interrupt.h>
 
 #define IRQ0_FREQUENCY          100
 #define mil_seconds_per_intr    (1000 / IRQ0_FREQUENCY)

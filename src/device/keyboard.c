@@ -1,5 +1,5 @@
-#include <ioqueue.h>
-#include <interrupt.h>
+#include <dev/ioqueue.h>
+#include <kernel/interrupt.h>
 
 #define KB_DATA     0x60
 #define KB_STAT     0x64

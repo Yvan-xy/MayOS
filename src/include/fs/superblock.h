@@ -17,7 +17,7 @@ typedef struct _SUPER_BLOCK {
     uint32_t inode_bitmap_sectors;  // inode bitmap occupied sectors size
 
     uint32_t inode_table_lba;	    // inode table start lba
-    uint32_t inode_table_sectors;	    // inode table occupied sectors size
+    uint32_t inode_table_sectors;	// inode table occupied sectors size
 
     uint32_t data_start_lba;	    // data start lba
     uint32_t root_inode_no;	        // root dir inode number

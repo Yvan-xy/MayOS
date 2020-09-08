@@ -1,12 +1,12 @@
-#include <tss.h>
-#include <debug.h>
+#include <kernel/tss.h>
+#include <lib/debug.h>
 #include <stdint.h>
-#include <thread.h>
+#include <kernel/thread.h>
 #include <system.h>
-#include <memory.h>
-#include <process.h>
-#include <console.h>
-#include <interrupt.h>
+#include <kernel/memory.h>
+#include <kernel/process.h>
+#include <dev/console.h>
+#include <kernel/interrupt.h>
 
 #define PG_SIZE 4096
 

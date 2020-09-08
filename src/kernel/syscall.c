@@ -1,9 +1,9 @@
-#include <idt.h>
-#include <thread.h>
-#include <memory.h>
-#include <console.h>
-#include <syscall.h>
-#include <interrupt.h>
+#include <kernel/idt.h>
+#include <kernel/thread.h>
+#include <kernel/memory.h>
+#include <dev/console.h>
+#include <kernel/syscall.h>
+#include <kernel/interrupt.h>
 
 extern void _syscall();
 syscall syscall_table[syscall_nr];

@@ -1,8 +1,8 @@
-#include <list.h>
+#include <lib/list.h>
 #include <system.h>
-#include <printk.h>
+#include <lib/printk.h>
 #include <stdint.h>
-#include <interrupt.h>
+#include <kernel/interrupt.h>
 
 
 /* Init the double linked list. */

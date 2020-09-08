@@ -1,10 +1,10 @@
-#include <sync.h>
-#include <debug.h>
-#include <thread.h>
-#include <memory.h>
-#include <printk.h>
-#include <process.h>
-#include <interrupt.h>
+#include <lib/sync.h>
+#include <lib/debug.h>
+#include <kernel/thread.h>
+#include <kernel/memory.h>
+#include <lib/printk.h>
+#include <kernel/process.h>
+#include <kernel/interrupt.h>
 
 #define PG_SIZE 4096
 

@@ -1,6 +1,6 @@
-#include <debug.h>
+#include <lib/debug.h>
 #include <system.h>
-#include <interrupt.h>
+#include <kernel/interrupt.h>
 
 void panic_spin(char* filename, int line,
                 const char* func, const char* condition) {

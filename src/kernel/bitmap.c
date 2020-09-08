@@ -1,6 +1,6 @@
-#include <debug.h>
+#include <lib/debug.h>
 #include <system.h>
-#include <bitmap.h>
+#include <kernel/bitmap.h>
 
 /* Set all bit to zero */
 void bitmap_init(bitmap* btmp) {

@@ -1,9 +1,9 @@
 #ifndef MAY_SYNC_H
 #define MAY_SYNC_H
 
-#include <list.h>
+#include <lib/list.h>
 #include <stdint.h>
-#include <thread.h>
+#include <kernel/thread.h>
 
 typedef struct _semaphore {
     uint8_t value;

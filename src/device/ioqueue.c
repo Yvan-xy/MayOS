@@ -1,7 +1,7 @@
-#include <debug.h>
+#include <lib/debug.h>
 #include <system.h>
-#include <ioqueue.h>
-#include <interrupt.h>
+#include <dev/ioqueue.h>
+#include <kernel/interrupt.h>
 
 /* Init the io queue. */
 void ioqueue_init(ioqueue* ioq) {

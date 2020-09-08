@@ -1,15 +1,15 @@
-#include <ide.h>
-#include <tss.h>
-#include <debug.h>
-#include <printk.h>
-#include <memory.h>
-#include <thread.h>
+#include <dev/ide.h>
+#include <kernel/tss.h>
+#include <lib/debug.h>
+#include <lib/printk.h>
+#include <kernel/memory.h>
+#include <kernel/thread.h>
 #include <system.h>
-#include <syscall.h>
-#include <console.h>
-#include <process.h>
-#include <keyboard.h>
-#include <interrupt.h>
+#include <kernel/syscall.h>
+#include <dev/console.h>
+#include <kernel/process.h>
+#include <dev/keyboard.h>
+#include <kernel/interrupt.h>
 
 void k_thread_a(void*);
 void k_thread_b(void*);

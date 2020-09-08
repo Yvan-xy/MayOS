@@ -1,5 +1,5 @@
-#include <printk.h>
-#include <interrupt.h>
+#include <lib/printk.h>
+#include <kernel/interrupt.h>
 
 /* This is a simple string array. It contains the message that
 *  corresponds to each and every exception. We get the correct

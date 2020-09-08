@@ -1,11 +1,11 @@
 #ifndef MAY_IDE_H
 #define MAY_IDE_H
 
-#include <list.h>
-#include <sync.h>
-#include <bitmap.h>
+#include <lib/list.h>
+#include <lib/sync.h>
+#include <kernel/bitmap.h>
 #include <stdint.h>
-#include <superblock.h>
+#include <fs/superblock.h>
 
 #define MAXIMUM_LOGIC_PARTS_NUM 8
 

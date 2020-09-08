@@ -1,8 +1,8 @@
 #ifndef MAY_THREAD_H
 #define MAY_THREAD_H
 
-#include <list.h>
-#include <memory.h>
+#include <lib/list.h>
+#include <kernel/memory.h>
 #include <stdint.h>
 #include <system.h>
 

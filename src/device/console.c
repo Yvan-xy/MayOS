@@ -1,6 +1,6 @@
-#include <sync.h>
-#include <thread.h>
-#include <console.h>
+#include <lib/sync.h>
+#include <kernel/thread.h>
+#include <dev/console.h>
 
 static lock console_lock;
 

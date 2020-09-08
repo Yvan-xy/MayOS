@@ -1,12 +1,12 @@
-#include <ide.h>
-#include <idt.h>
-#include <sync.h>
-#include <debug.h>
-#include <memory.h>
+#include <dev/ide.h>
+#include <kernel/idt.h>
+#include <lib/sync.h>
+#include <lib/debug.h>
+#include <kernel/memory.h>
 #include <system.h>
-#include <printk.h>
-#include <console.h>
-#include <interrupt.h>
+#include <lib/printk.h>
+#include <dev/console.h>
+#include <kernel/interrupt.h>
 
 // ports of disk regs
 #define reg_data(channel)       (channel->port_base + 0)

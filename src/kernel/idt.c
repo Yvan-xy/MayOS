@@ -1,7 +1,7 @@
-#include <idt.h>
-#include <printk.h>
-#include <syscall.h>
-#include <interrupt.h>
+#include <kernel/idt.h>
+#include <lib/printk.h>
+#include <kernel/syscall.h>
+#include <kernel/interrupt.h>
 
 /* Use this function to set an entry in the IDT. Alot simpler
 *  than twiddling with the GDT ;) */

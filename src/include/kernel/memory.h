@@ -1,8 +1,8 @@
 #ifndef MAY_MEMORY_H
 #define MAY_MEMORY_H
 
-#include <list.h>
-#include <bitmap.h>
+#include <lib/list.h>
+#include <kernel/bitmap.h>
 #include <stdint.h>
 
 enum pool_flags {

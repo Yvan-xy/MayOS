@@ -1,7 +1,7 @@
 #ifndef __MAY_SYSTEM_H
 #define __MAY_SYSTEM_H
 
-#include <scrn.h>
+#include <lib/scrn.h>
 #include <string.h>
 #define NULL    ((void*)0)
 

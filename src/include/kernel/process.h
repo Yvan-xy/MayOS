@@ -1,6 +1,6 @@
 #ifndef MAY_PROCESS_H
 #define MAY_PROCESS_H
-#include <thread.h>
+#include <kernel/thread.h>
 
 #define default_prio 31
 #define USER_STACK3_VADDR  (0xc0000000 - 0x1000)

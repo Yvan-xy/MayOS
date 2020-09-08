@@ -1,7 +1,7 @@
-#include <printk.h>
+#include <lib/printk.h>
 #include <system.h>
-#include <syscall.h>
-#include <console.h>
+#include <kernel/syscall.h>
+#include <dev/console.h>
 
 char* itoa(int value, char *str, int radix) {
     char reverse[36];
