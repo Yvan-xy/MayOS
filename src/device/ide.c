@@ -388,9 +388,11 @@ void ide_init() {
     printk("ide_init start\n");
     uint8_t hd_cnt = *((uint8_t *)(0x475)); // get the number of the disk
     ASSERT(hd_cnt > 0);
-    channel_cnt = DIV_ROUND_UP(hd_cnt, ·2); // calc ide channels number because one ide channel contains two disks
+    channel_cnt = DIV_ROUND_UP(hd_cnt, 2); // calc ide channels number because one ide channel contains two disks
     PIDE_CHANNEL channel;
     uint8_t channel_no = 0, dev_no = 0;
+
+    list_init(&partition_list);
 
     // handle disks of each channel
     while (channel_no < channel_cnt) {
