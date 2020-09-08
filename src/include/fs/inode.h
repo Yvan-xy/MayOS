@@ -6,13 +6,13 @@
 #include <stdint.h>
 
 typedef struct _inode {
-    uint32_t i_no;          // inode number
+    uint32_t i_number;          // inode number
 
     // if inode is file, i_size : file size
     // if inode is directory, i_size : sizeof all directory entries
     uint32_t i_size;
 
-    uint32_t i_open_cnt;    // file opend count
+    uint32_t i_open_cnts;    // file opend count
     int write_deny;         // write flag. ensure write sync
 
 
@@ -22,5 +22,10 @@ typedef struct _inode {
 
     list_elem inode_tag;    // to support inode cache
 } inode, INODE, *PINODE;
+
+PINODE inode_open(PPARTITION part, uint32_t inode_no);
+void inode_sync(PPARTITION part, PINODE inode, void* io_buf);
+void inode_init(uint32_t inode_no, PINODE new_inode);
+void inode_close(PINODE inode);
 
 #endif

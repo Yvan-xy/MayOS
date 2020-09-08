@@ -16,13 +16,13 @@ char* strcpy(char* dest, char* src) {
     return retval;
 }
 
-int8_t strcmp(const char* src1_, const char* src2_) {
-    ASSERT((src1_ != NULL) && (src2_ != NULL));
-    while((*src1_ != 0) && (*src1_ != *src2_)) {
-        ++src1_;
-        ++src2_;
+int8_t strcmp( const char* a, const char* b ) {
+    ASSERT( a != NULL && b != NULL );
+    while ( *a != 0 && *a == *b ) {
+        a++;
+        b++;
     }
-    return (*src1_ < *src2_ ? -1 : *src1_ > *src2_);
+    return *a < *b ? -1 : *a > *b;
 }
 
 char* strchr(const char* str, const uint8_t ch) {

@@ -1,7 +1,8 @@
-#include <lib/printk.h>
+#include <fs/file.h>
 #include <system.h>
-#include <kernel/syscall.h>
+#include <lib/printk.h>
 #include <dev/console.h>
+#include <kernel/syscall.h>
 
 char* itoa(int value, char *str, int radix) {
     char reverse[36];
@@ -142,7 +143,7 @@ uint32_t printf(const char *fmt, ...) {
     va_start(args, fmt);
     vsprintf(buf, fmt, args);
     va_end(args);
-    return write(buf);
+    return write(FD_STDOUT, buf, strlen(buf));
 }
 
 uint32_t sprintf(char* buf, const char* fmt, ...) {

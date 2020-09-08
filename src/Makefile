@@ -3,7 +3,8 @@ LD = ld
 
 OBJECTS = start.o main.o scrn.o system.o idt.o interrupt.o time.o keyboard.o \
 		  debug.o string.o bitmap.o memory.o thread.o list.o printk.o sync.o \
-		  console.o ioqueue.o tss.o process.o syscall.o ide.o
+		  console.o ioqueue.o tss.o process.o syscall.o ide.o fs.o inode.o \
+		  file.o dir.o
 
 CFLAGS = -Wall -fno-pie -O -fstrength-reduce -fomit-frame-pointer \
 		 -finline-functions -nostdinc -fno-builtin  -fno-stack-protector -m32
@@ -13,6 +14,10 @@ all: kernel.bin kernel.elf
 %.o: %.s
 	$(CC) -f elf -o start.o start.s
 	gcc $(CFLAGS) -I./include -c -o main.o   	main.c 				
+	gcc $(CFLAGS) -I./include -c -o fs.o   		./fs/fs.c 				
+	gcc $(CFLAGS) -I./include -c -o dir.o   	./fs/dir.c 				
+	gcc $(CFLAGS) -I./include -c -o file.o   	./fs/file.c 				
+	gcc $(CFLAGS) -I./include -c -o inode.o   	./fs/inode.c 				
 	gcc $(CFLAGS) -I./include -c -o scrn.o   	./lib/scrn.c   		
 	gcc $(CFLAGS) -I./include -c -o list.o   	./lib/list.c   		
 	gcc $(CFLAGS) -I./include -c -o sync.o  	./lib/sync.c 		

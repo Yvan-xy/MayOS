@@ -37,12 +37,11 @@ syscall syscall_table[syscall_nr];
 void sys_init();
 
 uint32_t getpid(void);
-uint32_t write(char* str);
+uint32_t write(int32_t fd, const void* buf, uint32_t count);
 void* malloc(uint32_t size);
 void free(void* ptr);
 
 
 uint32_t sys_getpid(void);
-uint32_t sys_write(char* str);
 
 #endif

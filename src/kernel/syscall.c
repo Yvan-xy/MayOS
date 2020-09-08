@@ -1,7 +1,8 @@
+#include <fs/fs.h>
 #include <kernel/idt.h>
+#include <dev/console.h>
 #include <kernel/thread.h>
 #include <kernel/memory.h>
-#include <dev/console.h>
 #include <kernel/syscall.h>
 #include <kernel/interrupt.h>
 
@@ -50,21 +51,16 @@ uint32_t getpid(void) {
     return _syscall0(SYS_GETPID);
 }
 
-uint32_t sys_write(char *str) {
-    console_put_str(str);
-    return strlen(str);
-}
-
-uint32_t write(char* str) {
-    return _syscall1(SYS_WRITE, str);
-}
-
 void* malloc(uint32_t size) {
     return (void*)_syscall1(SYS_MALLOC, size);
 }
 
 void free(void* ptr) {
     _syscall1(SYS_FREE, ptr);
+}
+
+uint32_t write(int32_t fd, const void* buf, uint32_t count) {
+    return _syscall3(SYS_WRITE, fd, buf, count);
 }
 
 void sys_init() {

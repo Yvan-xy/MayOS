@@ -1,14 +1,16 @@
+#include <fs/fs.h>
+#include <fs/dir.h>
+#include <system.h>
 #include <dev/ide.h>
-#include <kernel/tss.h>
 #include <lib/debug.h>
 #include <lib/printk.h>
+#include <kernel/tss.h>
+#include <dev/console.h>
+#include <dev/keyboard.h>
 #include <kernel/memory.h>
 #include <kernel/thread.h>
-#include <system.h>
 #include <kernel/syscall.h>
-#include <dev/console.h>
 #include <kernel/process.h>
-#include <dev/keyboard.h>
 #include <kernel/interrupt.h>
 
 void k_thread_a(void*);
@@ -23,6 +25,30 @@ static void init_all();
 void main() {
     init_all();
 
+    PDIR pdir = sys_opendir("/dir1");
+    if (pdir) {
+        printk("/dir1 opened!\n");
+        char* type = NULL;
+        PDIR_ENTRY dir_e = NULL;
+        while ((dir_e = sys_readdir(pdir))) {
+            if (dir_e->f_type == FT_REGULAR) {
+                type = "regular";
+            } else {
+                type = "directory";
+            }
+            printk("    %s  %s\n", type, dir_e->filename);
+        }
+    }
+
+    char cwd_buf[32] = {0};
+    sys_getcwd(cwd_buf, 32);
+    printf("cwd: %s\n", cwd_buf);
+    sys_chdir("/dir1");
+    sys_getcwd(cwd_buf, 32);
+    printf("cwd: %s\n", cwd_buf);
+
+
+    sys_closedir(pdir);
     open_intr();
     for (;;);
 }
@@ -35,6 +61,7 @@ static void init_all() {
     console_init();
     tss_init();
     ide_init();
+    filesys_init();
 
     printk("MayOS\n");
     settextcolor(CYAN, BLACK);

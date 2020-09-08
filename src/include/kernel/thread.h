@@ -53,6 +53,8 @@ enum task_status {
 
 typedef struct regs intr_stack;
 
+#define MAX_FILES_OPEN_PER_PROC 8
+
 /* Every thread has it own stack to save the function to be execute.
  * This struct's location in kernel stack is not fixed.
  * Only used for saving environment when "switch_to" happens.
@@ -85,6 +87,8 @@ struct task_struct {
 
     uint32_t elapsed_ticks;   // Elapsed times
 
+    int32_t fd_table[MAX_FILES_OPEN_PER_PROC];  // File descriptor array
+
     list_elem general_tag;    // The node of general list
     list_elem all_list_tag;   // The node of thread_all_list
 
@@ -92,6 +96,9 @@ struct task_struct {
 
     struct virtual_addr userprog_vaddr;     // User process virtual address
     mem_block_desc u_block_desc[DESC_CNT];  // User memory block descriptor
+
+    uint32_t cwd_inode_number;
+    int16_t parent_pid;  // parent process pid
 
     uint32_t stack_magic;     // stack eage mark, used for checking stack overflow
 };
