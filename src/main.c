@@ -18,20 +18,6 @@
 
 void main() {
     init_all();
-    /*
-        uint32_t file_size = 204;
-        uint32_t sec_cnt = DIV_ROUND_UP(file_size, 512);
-        struct disk* sda = &channels[0].devices[0];
-        void* prog_buf = sys_malloc(file_size);
-        ide_read(sda, 299, prog_buf, sec_cnt);
-        int32_t fd = sys_open("/logo.txt", O_CREAT|O_RDWR);
-        if (fd != -1) {
-            if (sys_write(fd, prog_buf, file_size) == -1) {
-                printk("File write error\n");
-                while(1);
-            }
-        }
-        */
     cls();
     print_logo();
     print_prompt();
