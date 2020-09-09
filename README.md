@@ -56,4 +56,10 @@ typedef enum _SYSCALL_NR {
 } SYSCALL_NR;
 ```
 
-[GNU General Public License Version 3]
+[GNU General Public License Version 3](https://github.com/Explainaur/MayOS/blob/master/LICENSE)
+
+### References
+
+- 操作系统真相还原
+- Linux内核解析
+- [Bran's Kernel Developments Toturial](http://www.osdever.net/bkerndev/Docs/gettingstarted.htm)
