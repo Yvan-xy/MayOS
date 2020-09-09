@@ -179,6 +179,12 @@ void kb_handler(struct regs *r) {
             // puts("kb_handler: INT\n");
             ch = TTY_INT;
             break;
+        case 'l':
+            ch = 'l' - 'a';
+            break;
+        case 'u':
+            ch = 'u' - 'a';
+            break;
         }
     }
 

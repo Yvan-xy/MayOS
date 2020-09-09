@@ -8,13 +8,13 @@ __start:
 
 
 	
-    EXTERN code, bss, end
+    ; EXTERN code, bss, end
     
-    ; AOUT kludge - must be physical addresses. Make a note of these:
-    ; The linker script fills in the data for these ones!
-    dd code
-    dd bss
-    dd end
+    ; ; AOUT kludge - must be physical addresses. Make a note of these:
+    ; ; The linker script fills in the data for these ones!
+    ; dd code
+    ; dd bss
+    ; dd end
     dd __start
 
 

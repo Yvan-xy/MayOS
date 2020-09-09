@@ -7,6 +7,7 @@
 #include <system.h>
 
 typedef void thread_func(void*);
+typedef uint16_t pid_t;
 
 extern list thread_ready_list;              // Ready thread list
 extern list thread_all_list;
@@ -53,6 +54,7 @@ enum task_status {
 
 typedef struct regs intr_stack;
 
+#define TASK_NAME_LEN           16
 #define MAX_FILES_OPEN_PER_PROC 8
 
 /* Every thread has it own stack to save the function to be execute.
@@ -81,7 +83,7 @@ struct task_struct {
     uint32_t* self_kstack;
     uint16_t pid;
     enum task_status status;
-    char name[16];
+    char name[TASK_NAME_LEN];
     uint8_t priority;         // Priority of threads
     uint8_t ticks;            // Time scales when running on cpu
 
@@ -109,12 +111,15 @@ struct task_struct* thread_start(char* name, int prio,
                                  thread_func function, void* args);
 struct task_struct* running_thread();
 
+extern void init(void);
+
 void thread_init(void);
 void thread_yield(void);
 void thread_block(enum task_status status);
 void thread_unblock(struct task_struct* pthread);
 void thread_create(struct task_struct* pthread, thread_func function, void* func_arg);
 void init_thread(struct task_struct* pthread, char* name, int prio);
+void sys_ps(void);
 
 void schedule();
 

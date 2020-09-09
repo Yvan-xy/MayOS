@@ -1,6 +1,6 @@
-#include <lib/debug.h>
 #include <string.h>
 #include <system.h>
+#include <lib/debug.h>
 
 int strlen(const char *str) {
     ASSERT(str != NULL);

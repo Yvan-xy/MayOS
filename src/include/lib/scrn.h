@@ -1,16 +1,16 @@
-#ifndef SCRN_H
-#define SCRN_H
+#ifndef MAY_LIB_SCRN_H
+#define MAY_LIB_SCRN_H
 #include <stdint.h>
 
 /*
-0	BLACK	      8	  DARK GREY
-1	BLUE	      9	  LIGHT BLUE
+0	BLACK	      8	    DARK GREY
+1	BLUE	      9	    LIGHT BLUE
 2	GREEN	      10	LIGHT GREEN
 3	CYAN	      11	LIGHT CYAN
-4	RED	        12	LIGHT RED
-5	MAGENTA	    13	LIGHT MAGENTA
+4	RED	          12	LIGHT RED
+5	MAGENTA	      13	LIGHT MAGENTA
 6	BROWN	      14	LIGHT BROWN
-7	LIGHT GREY	15	WHITE
+7	LIGHT GREY	  15	WHITE
 */
 
 enum COLOR {

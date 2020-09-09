@@ -80,6 +80,7 @@ void page_table_pte_remove(uint32_t vaddr);
 void vaddr_remove(enum pool_flags pf, void* _vaddr, uint32_t pg_cnt);
 
 uint32_t addr_v2p(uint32_t vaddr);
+void* get_a_page_without_opvaddrbitmap(enum pool_flags pf, uint32_t vaddr);
 
 void* sys_malloc(uint32_t size);
 void sys_free(void* ptr);

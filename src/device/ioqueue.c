@@ -38,6 +38,7 @@ void wakeup(struct task_struct** waiter) {
 
 /* Get a character from the queue. */
 char ioq_getchar(ioqueue* ioq) {
+    INTR_STATUS old_status = close_intr();
     ASSERT(get_intr_status() == INTR_OFF);
 
     /* Make the consumer waiting if the queue is empty. */
@@ -54,6 +55,8 @@ char ioq_getchar(ioqueue* ioq) {
     if (ioq->producer != NULL) {
         wakeup(&ioq->producer);
     }
+
+    set_intr_status(old_status);
     return byte;
 }
 
