@@ -2,7 +2,7 @@
 
 A toy kernel which comes with some user routines. (x86 based)
 
-!
+![mayos](https://github.com/Explainaur/MayOS/blob/master/Mayos.png?raw=true)
 
 ### Build requirements
 
