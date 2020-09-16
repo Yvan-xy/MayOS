@@ -136,7 +136,7 @@ void my_shell(void) {
         } else if (!strcmp("ps", argv[0])) {
             buildin_ps(argc, argv);
         } else if (!strcmp("clear", argv[0])) {
-            buildin_ps(argc, argv);
+            buildin_clear(argc, argv);
         } else if (!strcmp("mkdir", argv[0])) {
             buildin_mkdir(argc, argv);
         } else if (!strcmp("rmdir", argv[0])) {

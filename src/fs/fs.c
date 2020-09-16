@@ -252,8 +252,6 @@ static int search_file( const char* pathname, PPATH_SEARCH_RECORD searched_recor
         searched_record->parent_dir = &root_dir;
         searched_record->file_type = FT_DIRECTORY;
         searched_record->searched_path[ 0 ] = 0;  // empty path
-        printk("ohhhhhhhhhh %s pathname: \n", pathname);
-
         return 0;
     }
 
