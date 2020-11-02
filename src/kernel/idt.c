@@ -1,6 +1,6 @@
 #include <kernel/idt.h>
 #include <lib/printk.h>
-#include <kernel/syscall.h>
+#include <lib/user/syscall.h>
 #include <kernel/interrupt.h>
 
 /* Use this function to set an entry in the IDT. Alot simpler

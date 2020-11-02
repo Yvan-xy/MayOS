@@ -5,7 +5,7 @@
 #include <lib/debug.h>
 #include <lib/printk.h>
 #include <kernel/shell.h>
-#include <kernel/syscall.h>
+#include <lib/user/syscall.h>
 
 static char cmd_line[cmd_len] = {0};
 char* argv[MAX_ARG_NR];

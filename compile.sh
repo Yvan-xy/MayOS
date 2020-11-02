@@ -17,6 +17,5 @@ SEC_CNT=$(ls -l $BIN|awk '{printf("%d", ($5+511)/512)}')
 echo "count: "$SEC_CNT
 
 if [[ -f $BIN ]];then
-    strip $BIN
     dd if=./$DD_IN of=$DD_OUT bs=512 count=$SEC_CNT seek=300 conv=notrunc
 fi

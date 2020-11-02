@@ -2,7 +2,7 @@
 #include <system.h>
 #include <lib/exec.h>
 #include <kernel/memory.h>
-#include <kernel/syscall.h>
+#include <lib/user/syscall.h>
 
 #define PG_SIZE 4096
 

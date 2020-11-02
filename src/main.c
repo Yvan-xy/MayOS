@@ -11,7 +11,7 @@
 #include <kernel/shell.h>
 #include <kernel/memory.h>
 #include <kernel/thread.h>
-#include <kernel/syscall.h>
+#include <lib/user/syscall.h>
 #include <kernel/process.h>
 #include <kernel/interrupt.h>
 
@@ -19,7 +19,7 @@
 void main() {
     init_all();
 
-    uint32_t file_size = 8648;
+    uint32_t file_size = 12644;
     uint32_t sec_cnt = DIV_ROUND_UP(file_size, 512);
     struct disk* sda = &channels[0].devices[0];
     void* prog_buf = sys_malloc(file_size);
