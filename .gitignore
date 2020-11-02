@@ -9,6 +9,9 @@ bochs.log
 snapshot.txt
 ./src/kernel.*
 *.lock
+./src/build
+./src/build/*
+
 #bin
 bin
 *.elf

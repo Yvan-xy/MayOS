@@ -100,8 +100,9 @@ struct task_struct {
     mem_block_desc u_block_desc[DESC_CNT];  // User memory block descriptor
 
     uint32_t cwd_inode_number;
-    int16_t parent_pid;  // parent process pid
+    int16_t parent_pid;       // parent process pid
 
+    int8_t exit_status;       // The exit status which passes into exit()
     uint32_t stack_magic;     // stack eage mark, used for checking stack overflow
 };
 
@@ -111,6 +112,8 @@ struct task_struct* thread_start(char* name, int prio,
                                  thread_func function, void* args);
 struct task_struct* running_thread();
 
+struct task_struct* pid2thread(int32_t pid);
+
 extern void init(void);
 
 void thread_init(void);
@@ -118,6 +121,7 @@ void thread_yield(void);
 void thread_block(enum task_status status);
 void thread_unblock(struct task_struct* pthread);
 void thread_create(struct task_struct* pthread, thread_func function, void* func_arg);
+void thread_exit(struct task_struct* thread_over, bool need_schedule);
 void init_thread(struct task_struct* pthread, char* name, int prio);
 void sys_ps(void);
 

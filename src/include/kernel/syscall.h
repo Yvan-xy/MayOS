@@ -31,7 +31,9 @@ typedef enum _SYSCALL_NR {
     SYS_REWINDDIR,
     SYS_STAT,
     SYS_PS,
-    SYS_EXECV
+    SYS_EXECV,
+    SYS_EXIT,
+    SYS_WAIT
 } SYSCALL_NR;
 
 typedef void* syscall;
@@ -63,6 +65,8 @@ int32_t stat(const char* path, PSTAT buf);
 int32_t chdir(const char* path);
 void ps(void);
 int32_t execv(const char* path, const char* argv[]);
+int32_t exit(int32_t status);
+int32_t wait(int32_t* status);
 
 uint32_t sys_getpid(void);
 

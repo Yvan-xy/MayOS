@@ -15,9 +15,17 @@ list thread_ready_list;              // Ready thread list
 list thread_all_list;                // All thread list
 static list_elem* thread_tag;        // Save the node of the list
 
-extern void switch_to(struct task_struct* cur, struct task_struct* next);
+/* pid bitmap, support 1024 pid */
+uint8_t pid_bitmap_bits[128] = {0};
 
-lock pid_lock;
+/* pid pool */
+struct pid_pool {
+    bitmap pid_bitmap;      // pid bitmap
+    uint32_t pid_start;     // start pid
+    lock pid_lock;          // pid lock
+} pid_pool;
+
+extern void switch_to(struct task_struct* cur, struct task_struct* next);
 
 
 static void idle(void* arg UNUSED) {
@@ -28,16 +36,56 @@ static void idle(void* arg UNUSED) {
 }
 
 static uint16_t allocate_pid(void) {
-    static uint16_t next_pid = 0;
-    lock_acquire(&pid_lock);
-    next_pid++;
-    lock_release(&pid_lock);
-    return next_pid;
+    lock_acquire(&pid_pool.pid_lock);
+    int32_t bit_idx = bitmap_scan(&pid_pool.pid_bitmap, 1);
+    bitmap_set(&pid_pool.pid_bitmap, bit_idx, 1);
+    lock_release(&pid_pool.pid_lock);
+    return (bit_idx + pid_pool.pid_start);
 }
+
+void release_pid(pid_t pid) {
+    lock_acquire(&pid_pool.pid_lock);
+    int32_t bit_idx = pid - pid_pool.pid_start;
+    bitmap_set(&pid_pool.pid_bitmap, bit_idx, 0);
+    lock_release(&pid_pool.pid_lock);
+}
+
+/* Check task's pid */
+bool pid_check(struct list_elem* pelem, int32_t pid) {
+    struct task_struct* pthread =
+        elem2entry(struct task_struct, all_list_tag, pelem);
+
+    if (pthread->pid == pid) {
+        return true;
+    }
+    return false;
+}
+
+/* Find the PCB according to the pid. */
+struct task_struct* pid2thread(int32_t pid) {
+    struct list_elem* pelem = list_traversal(&thread_all_list, pid_check, pid);
+    if (pelem == NULL) {
+        return NULL;
+    }
+    struct task_struct* thread = elem2entry(struct task_struct, all_list_tag, pelem);
+    return thread;
+}
+
 
 pid_t fork_pid( void ) {
     return allocate_pid();
 }
+
+/* Init the pid pool */
+void pid_pool_init(void) {
+    pid_pool.pid_start = 1;
+    pid_pool.pid_bitmap.bits = pid_bitmap_bits;
+    pid_pool.pid_bitmap.bitmap_bytes_len = 128;
+    bitmap_init(&pid_pool.pid_bitmap);
+    lock_init(&pid_pool.pid_lock);
+}
+
+/*  */
 
 
 /* Get the PCB pointer of the current task. */
@@ -126,6 +174,38 @@ struct task_struct* thread_start(char* name, int prio,
     return thread;
 }
 
+/* Collect thread_over's pcb and page table. Remove it from schedule list. */
+void thread_exit(struct task_struct* thread_over, bool need_schedule) {
+    close_intr();
+    thread_over->status = TASK_DIED;
+
+    /* If thread_over is not current thread, it maybe in the ready list. */
+    if (elem_find(&thread_ready_list, &thread_over->general_tag)) {
+        list_remove(&thread_over->general_tag);
+    }
+
+    /* Collect page table if it is process. */
+    if (thread_over->pgdir) {
+        mfree_page(PF_KERNEL, thread_over->pgdir, 1);
+    }
+
+    /* Remove from all_thread_list. */
+    list_remove(&thread_over->all_list_tag);
+
+    /* Collect PCB's page. */
+    if (thread_over != main_thread) {
+        mfree_page(PF_KERNEL, thread_over, 1);
+    }
+
+    /* Return pid */
+    release_pid(thread_over->pid);
+
+    if (need_schedule) {
+        schedule();
+        PANIC("thread_exit: should not be here\n");
+    }
+}
+
 volatile void make_main_thread(void) {
     main_thread = running_thread();
     init_thread(main_thread, "main", 31);
@@ -167,7 +247,7 @@ void schedule() {
 void thread_init(void) {
     list_init(&thread_all_list);
     list_init(&thread_ready_list);
-    lock_init(&pid_lock);
+    pid_pool_init();
 
     process_execute(init, "init");
 

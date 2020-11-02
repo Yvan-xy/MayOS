@@ -5,6 +5,7 @@
 #include <kernel/idt.h>
 #include <dev/console.h>
 #include <kernel/fork.h>
+#include <kernel/exit.h>
 #include <kernel/thread.h>|
 #include <kernel/memory.h>
 #include <kernel/syscall.h>
@@ -143,6 +144,14 @@ int32_t execv(const char* path, const char* argv[]) {
     return _syscall2(SYS_EXECV, path, argv);
 }
 
+int32_t exit(int32_t status) {
+    return _syscall1(SYS_EXIT, status);
+}
+
+int32_t wait(int32_t* status) {
+    return _syscall1(SYS_WAIT, status);
+}
+
 void sys_init() {
     idt_set_gate(ISR_SYSCALL, (unsigned)_syscall, SELECTOR_K_CODE, 0xEF);
     syscall_table[SYS_GETPID]     = sys_getpid;
@@ -168,4 +177,6 @@ void sys_init() {
     syscall_table[SYS_STAT]       = sys_stat;
     syscall_table[SYS_PS]         = sys_ps;
     syscall_table[SYS_EXECV]      = sys_execv;
+    syscall_table[SYS_EXIT]       = sys_exit;
+    syscall_table[SYS_WAIT]       = sys_wait;
 }

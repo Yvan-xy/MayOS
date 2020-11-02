@@ -1,17 +1,21 @@
 CC = nasm
 LD = ld
+AR = ar
 
 OBJECTS = start.o main.o scrn.o system.o idt.o interrupt.o time.o keyboard.o \
 		  debug.o string.o bitmap.o memory.o thread.o list.o printk.o sync.o \
 		  console.o ioqueue.o tss.o process.o syscall.o ide.o fs.o inode.o \
-		  file.o dir.o fork.o init.o shell.o exec.o
+		  file.o dir.o fork.o init.o shell.o exec.o exit.o
 
 CFLAGS = -Wall -fno-pie -O -fstrength-reduce -fomit-frame-pointer \
 		 -finline-functions -nostdinc -fno-builtin  -fno-stack-protector -m32
+		 
 
-all: kernel.bin kernel.elf
+all: kernel.bin kernel.elf libkernel.a
+	mv *.o *.a ./build/
 
 %.o: %.s
+	mkdir build
 	$(CC) -f elf -o start.o start.s
 	gcc $(CFLAGS) -I./include -c -o main.o   	main.c 				
 	gcc $(CFLAGS) -I./include -c -o fs.o   		./fs/fs.c 				
@@ -30,6 +34,7 @@ all: kernel.bin kernel.elf
 	gcc $(CFLAGS) -I./include -c -o tss.o 	 	./kernel/tss.c 		
 	gcc $(CFLAGS) -I./include -c -o fork.o 	 	./kernel/fork.c 		
 	gcc $(CFLAGS) -I./include -c -o init.o 	 	./kernel/init.c 		
+	gcc $(CFLAGS) -I./include -c -o exit.o 		./kernel/exit.c 		
 	gcc $(CFLAGS) -I./include -c -o shell.o 	./kernel/shell.c 		
 	gcc $(CFLAGS) -I./include -c -o bitmap.o 	./kernel/bitmap.c 		
 	gcc $(CFLAGS) -I./include -c -o memory.o    ./kernel/memory.c 
@@ -43,7 +48,8 @@ all: kernel.bin kernel.elf
 	gcc $(CFLAGS) -I./include -c -o ioqueue.o   ./device/ioqueue.c 
 	gcc $(CFLAGS) -I./include -c -o keyboard.o  ./device/keyboard.c 
 
-
+libkernel.a: $(OBJECTS)
+	$(AR) -r libkernel.a $(OBJECTS)
 
 kernel.bin: $(OBJECTS)
 	$(LD) -m elf_i386 -T link.ld -o ../bin/kernel.bin $(OBJECTS)
@@ -53,7 +59,8 @@ kernel.elf: $(OBJECTS)
 	objdump -d kernel.elf > kernel.s
 
 clean:
-	rm *.o kernel.elf kernel.s
+	rm kernel.elf kernel.s
+	rm -r build
 
 beauty:
 	astyle  --style=google --recursive "*.c,*.h" -n

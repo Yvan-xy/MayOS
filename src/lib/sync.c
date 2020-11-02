@@ -29,7 +29,7 @@ void sema_down(semaphore* psema) {
         thread_block(TASK_BLOCKED);
     }
 
-    (psema->value)--;                 // Update semaphore value
+    (psema->value)--;               // Update semaphore value
     ASSERT(psema->value == 0);      // The value should always be zero
     set_intr_status(old_status);    // Recover the interrupt status.
 }

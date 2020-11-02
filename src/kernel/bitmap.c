@@ -4,7 +4,7 @@
 
 /* Set all bit to zero */
 void bitmap_init(bitmap* btmp) {
-    memset(btmp->bits, 0,btmp->bitmap_bytes_len);
+    memset(btmp->bits, 0, btmp->bitmap_bytes_len);
 }
 
 /*

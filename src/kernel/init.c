@@ -37,7 +37,14 @@ void init(void) {
 
     uint32_t ret_pid = fork();
     if (ret_pid) {
-        for(;;);
+        int status;
+        int child_pid;
+        /* Handle zombie process. */
+        while(1) {
+            child_pid = wait(&status);
+            printf("I'm init, My pid is 1, I recieve a child," \
+                   "It's pid is %d, status is %d\n", child_pid, status);
+        }
     } else {
         my_shell();
     }

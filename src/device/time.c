@@ -63,6 +63,6 @@ void mtime_sleep(uint32_t m_seconds) {
 }
 
 void timer_init() {
-    timer_phase(100);   // tigger 100 times pre second
+    timer_phase(1000);   // tigger 100 times pre second
     timer_install();
 }
