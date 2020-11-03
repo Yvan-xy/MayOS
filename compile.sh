@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BIN="a"
+BIN=$1
 CFLAGS="-m32 -O3 -Wall -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes -Wsystem-headers -fno-pie -O -fstrength-reduce -fomit-frame-pointer \
 		 -finline-functions -nostdinc -fno-builtin  -fno-stack-protector"
 LIB="./src/include"
