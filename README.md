@@ -53,9 +53,26 @@ typedef enum _SYSCALL_NR {
     SYS_REWINDDIR,
     SYS_STAT,
     SYS_PS,
-    SYS_EXECV
+    SYS_EXECV,
+    SYS_EXIT,
+    SYS_WAIT
 } SYSCALL_NR;
 ```
+
+### How to write user program for MayOS
+
+The MayOS sdk's head file is in the `include/user` and `stdio.h string.h`. You can write your own program and link with the `libMay.a`. You can compile it by running `./compile.sh bin`.  
+
+For Example:
+```sh
+cd ./src/user
+./compile ./cat/cat
+```
+
+Then the `cat` ELF file will be compiled.
+
+
+### License
 
 [GNU General Public License Version 3](https://github.com/Explainaur/MayOS/blob/master/LICENSE)
 
