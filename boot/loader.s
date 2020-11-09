@@ -176,7 +176,6 @@ p_mode_start:
 
     jmp SELECTOR_CODE:enter_kernel
 
-
     jmp $
 
 enter_kernel:

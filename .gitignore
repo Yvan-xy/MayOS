@@ -8,6 +8,7 @@
 bochs.log
 snapshot.txt
 ./src/kernel.s
+./src/kernel.elf
 *.lock
 ./src/build
 ./src/build/*

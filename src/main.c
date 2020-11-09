@@ -16,7 +16,7 @@
 #include <kernel/interrupt.h>
 
 
-void main() {
+int main() {
     init_all();
 
     // uint32_t file_size = 12736;
