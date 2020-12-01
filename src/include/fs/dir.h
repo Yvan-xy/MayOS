@@ -18,7 +18,7 @@ typedef struct _DIR {
 typedef struct _dir_entry {
     char filename[ MAX_FILE_NAME_LEN ];  // name
     uint32_t i_no;                       // inode number
-    enum _FILE_TYPES f_type;                   // file type
+    enum _FILE_TYPES f_type;             // file type
 } dir_entry, DIR_ENTRY, *PDIR_ENTRY;
 
 extern DIR root_dir;  // root dir

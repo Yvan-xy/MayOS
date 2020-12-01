@@ -13,7 +13,7 @@ typedef struct _inode {
     uint32_t i_size;
 
     uint32_t i_open_cnts;    // file opend count
-    int write_deny;         // write flag. ensure write sync
+    int write_deny;          // write flag. ensure write sync
 
 
     // i_sectors[0-11]: direct block;
