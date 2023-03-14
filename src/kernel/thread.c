@@ -37,7 +37,7 @@ static void idle(void* arg UNUSED) {
 
 static uint16_t allocate_pid(void) {
     lock_acquire(&pid_pool.pid_lock);
-    int32_t bit_idx = bitmap_scan(&pid_pool.pid_bitmap, 1);
+    int32_t bit_idx = bitmap_scan(&pid_pool.pid_bitmap, 1, SKIP_ZERO);
     bitmap_set(&pid_pool.pid_bitmap, bit_idx, 1);
     lock_release(&pid_pool.pid_lock);
     return (bit_idx + pid_pool.pid_start);

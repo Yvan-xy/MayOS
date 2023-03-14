@@ -76,5 +76,6 @@ typedef struct {
 
 int32_t sys_execv(const char* path, const char* argv[]);
 
+bool is_elf(char *pathname);
 
 #endif

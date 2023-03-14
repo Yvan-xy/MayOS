@@ -137,7 +137,7 @@ static void* vaddr_get(enum pool_flags pf, uint32_t pg_cnt) {
     if (pf == PF_KERNEL) {  // Kernel thread
 
         /* Search for continuous pages */
-        bit_idx_start = bitmap_scan(&kernel_vaddr.vaddr_bitmap, pg_cnt);
+        bit_idx_start = bitmap_scan(&kernel_vaddr.vaddr_bitmap, pg_cnt, SKIP_ZERO);
 
         if (bit_idx_start == -1) {  // if failed, return NULL
             return NULL;
@@ -152,8 +152,15 @@ static void* vaddr_get(enum pool_flags pf, uint32_t pg_cnt) {
     } else {    // User process
         struct task_struct* cur_thread = running_thread();
 
+        /* Search from heap start address */
+        uint32_t skip_cnt = SKIP_ZERO;
+        if (cur_thread->heap_start != 0) {
+            uint32_t heap_offset = cur_thread->heap_start - cur_thread->userprog_vaddr.vaddr_start;
+            skip_cnt = heap_offset / PG_SIZE;
+        }
+
         /* Search for continuous pages */
-        bit_idx_start = bitmap_scan(&cur_thread->userprog_vaddr.vaddr_bitmap, pg_cnt);
+        bit_idx_start = bitmap_scan(&cur_thread->userprog_vaddr.vaddr_bitmap, pg_cnt, skip_cnt);
 
         if (bit_idx_start == -1) {  // if failed, return NULL
             return NULL;
@@ -186,7 +193,7 @@ uint32_t* pde_ptr(uint32_t vaddr) {
 
 static void* palloc(struct pool* m_pool) {
     /* Find a physical page. */
-    int bit_idx = bitmap_scan(&m_pool->pool_bitmap, 1);
+    int bit_idx = bitmap_scan(&m_pool->pool_bitmap, 1, SKIP_ZERO);
 
     if (bit_idx == -1) {    // return NULL if failed
         return NULL;

@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <system.h>
+#include <fs/fs.h>
 #include <fs/dir.h>
 #include <fs/file.h>
 #include <lib/debug.h>
@@ -125,24 +126,24 @@ void my_shell(void) {
         }
 
         if (!strcmp("ls", argv[0])) {
-            buildin_ls(argc, argv);
+            builtin_ls(argc, argv);
         } else if (!strcmp("cd", argv[0])) {
-            if (buildin_cd(argc, argv) != NULL) {
+            if (builtin_cd(argc, argv) != NULL) {
                 memset(cwd_cache, 0, MAX_PATH_LEN);
                 strcpy(cwd_cache, final_path);
             }
         } else if (!strcmp("pwd", argv[0])) {
-            buildin_pwd(argc, argv);
+            builtin_pwd(argc, argv);
         } else if (!strcmp("ps", argv[0])) {
-            buildin_ps(argc, argv);
+            builtin_ps(argc, argv);
         } else if (!strcmp("clear", argv[0])) {
-            buildin_clear(argc, argv);
+            builtin_clear(argc, argv);
         } else if (!strcmp("mkdir", argv[0])) {
-            buildin_mkdir(argc, argv);
+            builtin_mkdir(argc, argv);
         } else if (!strcmp("rmdir", argv[0])) {
-            buildin_rmdir(argc, argv);
+            builtin_rmdir(argc, argv);
         } else if (!strcmp("rm", argv[0])) {
-            buildin_rm(argc, argv);
+            builtin_rm(argc, argv);
         } else {
             int32_t pid = fork();
             if (pid) {
@@ -164,6 +165,10 @@ void my_shell(void) {
                     printf("my_shell: cannot access %s: No such file or directory\n", argv[0]);
                     exit(-1);
                 } else {
+                    if (!is_elf(final_path)) {
+                        printf("my_shell: %s: is not a executable file\n", argv[0]);
+                        exit(-1);
+                    }
                     execv(argv[0], argv);
                     printf("Exec done!\n");
                 }
@@ -234,7 +239,7 @@ void make_clear_abs_path( char* path, char* final_path ) {
     wash_path( abs_path, final_path );
 }
 
-void buildin_pwd( uint32_t argc, char** argv UNUSED ) {
+void builtin_pwd( uint32_t argc, char** argv UNUSED ) {
     if ( argc != 1 ) {
         printf( "pwd: no argument support!\n" );
         return;
@@ -247,7 +252,7 @@ void buildin_pwd( uint32_t argc, char** argv UNUSED ) {
     }
 }
 
-char* buildin_cd( uint32_t argc, char** argv ) {
+char* builtin_cd( uint32_t argc, char** argv ) {
     if ( argc > 2 ) {
         printf( "cd: only support 1 argument!\n" );
         return NULL;
@@ -269,7 +274,7 @@ char* buildin_cd( uint32_t argc, char** argv ) {
 }
 
 /* ls命令的内建函数 */
-void buildin_ls( uint32_t argc, char** argv ) {
+void builtin_ls( uint32_t argc, char** argv ) {
     char* pathname = NULL;
     STAT file_stat;
     memset( &file_stat, 0, sizeof( STAT ) );
@@ -331,6 +336,7 @@ void buildin_ls( uint32_t argc, char** argv ) {
         if ( long_info ) {
             char ftype;
             printf( "total: %d\n", file_stat.st_size );
+            printf( "Type\tNo.\tSize\tName\n" );
             while ( ( dir_e = readdir( dir ) ) ) {
                 ftype = 'd';
                 if ( dir_e->f_type == FT_REGULAR ) {
@@ -343,11 +349,34 @@ void buildin_ls( uint32_t argc, char** argv ) {
                     printf( "ls: cannot access %s: No such file or directory\n", dir_e->filename );
                     return;
                 }
-                printf( "%c  %d  %d  %s\n", ftype, dir_e->i_no, file_stat.st_size, dir_e->filename );
+                printf( "%c\t%d\t%d\t", ftype, dir_e->i_no, file_stat.st_size );
+                if ( dir_e->f_type == FT_DIRECTORY ) {
+                    settextcolor( LIGHT_BLUE, BLACK );
+                    printf( "%s\n", dir_e->filename );
+                    settextcolor( WHITE, BLACK );
+                } else if ( is_elf(sub_pathname) ) {
+                    settextcolor( LIGHT_GREEN, BLACK );
+                    printf( "%s\n", dir_e->filename );
+                    settextcolor( WHITE, BLACK );
+                } else {
+                    printf( "%s\n", dir_e->filename );
+                }
             }
         } else {
             while ( ( dir_e = readdir( dir ) ) ) {
-                printf( "%s", dir_e->filename );
+                sub_pathname[ pathname_len ] = 0;
+                strcat( sub_pathname, dir_e->filename );
+                if ( dir_e->f_type == FT_DIRECTORY ) {
+                    settextcolor( LIGHT_BLUE, BLACK );
+                    printf( "%s", dir_e->filename );
+                    settextcolor( WHITE, BLACK );
+                } else if ( is_elf(sub_pathname) ) {
+                    settextcolor( LIGHT_GREEN, BLACK );
+                    printf( "%s", dir_e->filename );
+                    settextcolor( WHITE, BLACK );
+                } else {
+                    printf( "%s", dir_e->filename );
+                }
                 putchar( ' ' );
             }
             putchar( '\n' );
@@ -355,14 +384,28 @@ void buildin_ls( uint32_t argc, char** argv ) {
         closedir( dir );
     } else {
         if ( long_info ) {
-            printf( "-  %d  %d  %s\n", file_stat.st_ino, file_stat.st_size, pathname );
+            printf( "Type\tNo.\tSize\tName\n" );
+            printf( "-\t%d\t%d\t", file_stat.st_ino, file_stat.st_size );
+            if ( is_elf(pathname) ) {
+                settextcolor( LIGHT_GREEN, BLACK );
+                printf( "%s\n", pathname );
+                settextcolor( WHITE, BLACK );
+            } else {
+                printf( "%s\n", pathname );
+            }
         } else {
-            printf( "%s\n", pathname );
+            if ( is_elf(pathname) ) {
+                settextcolor( LIGHT_GREEN, BLACK );
+                printf( "%s\n", pathname );
+                settextcolor( WHITE, BLACK );
+            } else {
+                printf( "%s\n", pathname );
+            }
         }
     }
 }
 
-void buildin_ps( uint32_t argc, char** argv UNUSED ) {
+void builtin_ps( uint32_t argc, char** argv UNUSED ) {
     if ( argc != 1 ) {
         printf( "ps: no argument support!\n" );
         return;
@@ -370,7 +413,7 @@ void buildin_ps( uint32_t argc, char** argv UNUSED ) {
     ps();
 }
 
-void buildin_clear( uint32_t argc, char** argv UNUSED ) {
+void builtin_clear( uint32_t argc, char** argv UNUSED ) {
     if ( argc != 1 ) {
         printf( "clear: no argument support!\n" );
         return;
@@ -378,7 +421,7 @@ void buildin_clear( uint32_t argc, char** argv UNUSED ) {
     clear();
 }
 
-int32_t buildin_mkdir( uint32_t argc, char** argv ) {
+int32_t builtin_mkdir( uint32_t argc, char** argv ) {
     int32_t ret = -1;
     if ( argc != 2 ) {
         printf( "mkdir: only support 1 argument!\n" );
@@ -397,7 +440,7 @@ int32_t buildin_mkdir( uint32_t argc, char** argv ) {
     return ret;
 }
 
-int32_t buildin_rmdir( uint32_t argc, char** argv ) {
+int32_t builtin_rmdir( uint32_t argc, char** argv ) {
     int32_t ret = -1;
     if ( argc != 2 ) {
         printf( "rmdir: only support 1 argument!\n" );
@@ -416,7 +459,7 @@ int32_t buildin_rmdir( uint32_t argc, char** argv ) {
     return ret;
 }
 
-int32_t buildin_rm( uint32_t argc, char** argv ) {
+int32_t builtin_rm( uint32_t argc, char** argv ) {
     int32_t ret = -1;
     if ( argc != 2 ) {
         printf( "rm: only support 1 argument!\n" );
@@ -433,4 +476,3 @@ int32_t buildin_rm( uint32_t argc, char** argv ) {
     }
     return ret;
 }
-

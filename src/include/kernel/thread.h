@@ -98,6 +98,7 @@ struct task_struct {
 
     struct virtual_addr userprog_vaddr;     // User process virtual address
     mem_block_desc u_block_desc[DESC_CNT];  // User memory block descriptor
+    uint32_t heap_start;                    // User heap start address
 
     uint32_t cwd_inode_number;
     int16_t parent_pid;       // parent process pid

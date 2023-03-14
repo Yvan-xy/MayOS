@@ -77,6 +77,9 @@ void create_user_vaddr_bitmap(struct task_struct* user_prog) {
     user_prog->userprog_vaddr.vaddr_bitmap.bits = get_kernel_pages( bitmap_pg_cnt );
     user_prog->userprog_vaddr.vaddr_bitmap.bitmap_bytes_len = ( 0xc0000000 - USER_VADDR_START ) / PG_SIZE / 8;
     bitmap_init( &user_prog->userprog_vaddr.vaddr_bitmap );
+
+    // set heap start address
+    user_prog->heap_start = 0;
 }
 
 // create user process

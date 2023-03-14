@@ -673,8 +673,8 @@ PDIR sys_opendir( const char* name ) {
         printk( "In %s, sub path %s not exist\n", name, searched_record.searched_path );
     } else {
         if ( searched_record.file_type == FT_REGULAR ) {
-            printk( "%s is regular file!\n", name );
-        } else if ( searched_record.file_type == FT_DIRECTORY ) {
+            printk( "%s is a regular file!\n", name );
+        }else if ( searched_record.file_type == FT_DIRECTORY ) {
             ret = dir_open( cur_part, inode_no );
         }
     }
@@ -718,7 +718,7 @@ int32_t sys_rmdir( const char* pathname ) {
         printk( "In %s, sub path %s not exist\n", pathname, searched_record.searched_path );
     } else {
         if ( searched_record.file_type == FT_REGULAR ) {
-            printk( "%s is regular file!\n", pathname );
+            printk( "%s is a regular file!\n", pathname );
         } else {
             struct dir* dir = dir_open( cur_part, inode_no );
             if ( !dir_is_empty( dir ) ) {

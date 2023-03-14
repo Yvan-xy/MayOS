@@ -47,7 +47,7 @@ int32_t pcb_fd_install( int32_t global_fd_idx ) {
 
 // alloc an inode and return inode index
 int32_t inode_bitmap_alloc( PPARTITION part ) {
-    int32_t bit_idx = bitmap_scan( &part->inode_bitmap, 1 );
+    int32_t bit_idx = bitmap_scan( &part->inode_bitmap, 1, SKIP_ZERO );
     if ( bit_idx == -1 ) {
         return -1;
     }
@@ -57,7 +57,7 @@ int32_t inode_bitmap_alloc( PPARTITION part ) {
 
 // alloc a block and return sector(block) addr
 int32_t block_bitmap_alloc( PPARTITION part ) {
-    int32_t bit_idx = bitmap_scan( &part->block_bitmap, 1 );
+    int32_t bit_idx = bitmap_scan( &part->block_bitmap, 1, SKIP_ZERO );
     if ( bit_idx == -1 ) {
         return -1;
     }
@@ -425,6 +425,7 @@ int32_t file_read( PFILE file, void* buf, uint32_t count ) {
     if ( io_buf == NULL ) {
         printk( "file_read: sys_malloc for io_buf failed\n" );
     }
+
     uint32_t* all_blocks = ( uint32_t* )sys_malloc( BLOCK_SIZE + 48 );
     if ( all_blocks == NULL ) {
         printk( "file_read: sys_malloc for all_blocks failed\n" );
@@ -497,8 +498,8 @@ int32_t file_read( PFILE file, void* buf, uint32_t count ) {
         bytes_read += chunk_size;
         size_left -= chunk_size;
     }
+
     sys_free( all_blocks );
     sys_free( io_buf );
     return bytes_read;
 }
-

@@ -76,7 +76,6 @@ void sys_init() {
 }
 
 void init(void) {
-
     uint32_t ret_pid = fork();
     if (ret_pid) {
         int status;

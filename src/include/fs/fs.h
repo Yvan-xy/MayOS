@@ -12,9 +12,9 @@
 
 // file type
 typedef enum _FILE_TYPES {
-    FT_UNKNOWN,   // unknown file type
-    FT_REGULAR,   // ordinary file
-    FT_DIRECTORY  // directory
+    FT_UNKNOWN = 0,  // unknown file type
+    FT_REGULAR,      // ordinary file
+    FT_DIRECTORY,    // directory
 } FILE_TYPES;
 
 typedef enum _FILE_OPEN_FLAGS {
@@ -48,7 +48,6 @@ typedef struct _STAT {
 extern PPARTITION cur_part;
 
 void filesys_init( void );
-
 int32_t path_depth_cnt( char* pathname );
 char* path_parse( char* pathname, char* name_store );
 int32_t sys_open( const char* pathname, uint8_t flags );

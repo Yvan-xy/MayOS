@@ -22,8 +22,8 @@ uint8_t bitmap_scan_test(bitmap* btmp, uint32_t bit_idx) {
     return index if success,
     return -1 if fail
 */
-int bitmap_scan(bitmap* btmp, uint32_t cnt) {
-    uint32_t idx_byte = 0;
+int bitmap_scan(bitmap* btmp, uint32_t cnt, uint32_t skip_cnt) {
+    uint32_t idx_byte = skip_cnt;
     while ( ( 0xff == btmp->bits[ idx_byte ] ) && ( idx_byte < btmp->bitmap_bytes_len ) ) {
         // 0xff means this bytes is full, skip it
         idx_byte++;

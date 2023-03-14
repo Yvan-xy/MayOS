@@ -42,6 +42,16 @@ int segment_load(int32_t fd, uint32_t offset, uint32_t filesz, uint32_t vaddr) {
     return true;
 }
 
+void reset_heap(Elf32_Phdr *prog_header) {
+    uint32_t heap_start = 0;
+    struct task_struct* cur = running_thread();
+
+    uint32_t seg_end = prog_header->p_vaddr + prog_header->p_memsz;
+    if (seg_end > heap_start) heap_start = seg_end;
+    cur->heap_start = (heap_start + PG_SIZE) & 0xfffff000;
+    block_desc_init(cur->u_block_desc);
+}
+
 int32_t load(const char* pathname) {
     int32_t ret = -1;
     Elf32_Ehdr elf_header;
@@ -62,7 +72,7 @@ int32_t load(const char* pathname) {
     }
 
     /* Check if ELF file */
-    if (memcmp(elf_header.e_ident, "\177ELF\1\1\1", 7)
+    if (!memcmp(elf_header.e_ident, "\177ELF\1\1\1", 7)
             || elf_header.e_type != 2
             || elf_header.e_machine != 3
             || elf_header.e_version != 1
@@ -96,6 +106,10 @@ int32_t load(const char* pathname) {
                 prog_idx++;
                 continue;
             }
+            
+            // set the heap segment after bss section
+            reset_heap(&prog_header);
+
             ret = segment_load(fd, prog_header.p_offset,
                                prog_header.p_filesz, prog_header.p_vaddr);
             if (!ret) {
@@ -135,4 +149,34 @@ int32_t sys_execv(const char* path, const char* argv[]) {
 
     __asm__ __volatile__ ("movl %0, %%esp; jmp intr_exit" : : "g" (intr_0_stack) : "memory");
     return 0;
+}
+
+bool is_elf(char *pathname) {
+    Elf32_Ehdr elf_header;
+    memset(&elf_header, 0, sizeof(Elf32_Ehdr));
+    struct task_struct *cur = running_thread();
+
+    int32_t fd = open(pathname, O_RDONLY);
+    if (fd == -1) {
+        return false;
+    }
+
+    /* Read ELF Header */
+    int32_t size = read(fd, &elf_header, sizeof(Elf32_Ehdr));
+    close(fd);
+    if (size != sizeof(Elf32_Ehdr)) {
+        return false;
+    }
+
+    /* Check if ELF file */
+    if (memcmp(elf_header.e_ident, "\177ELF\1\1\1", 7)
+            || elf_header.e_type != 2
+            || elf_header.e_machine != 3
+            || elf_header.e_version != 1
+            || elf_header.e_phnum > 1024
+            || elf_header.e_phentsize != sizeof(Elf32_Phdr)) {
+        return false;
+    }
+
+    return true;
 }

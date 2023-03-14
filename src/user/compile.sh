@@ -25,6 +25,6 @@ gcc $CFLAGS -I $LIB -o $BIN".o" $BIN".c"
 ld -m elf_i386 -e __start $BIN".o" libMay.a -o $BIN
 SEC_CNT=$(ls -l $BIN|awk '{printf("%d", ($5+511)/512)}')
 
-# if [[ -f $BIN ]]; then
-#     dd if=./$DD_IN of=$DD_OUT bs=512 count=$SEC_CNT seek=300 conv=notrunc
-# fi
+if [[ -f $BIN ]]; then
+    dd if=./$DD_IN of=$DD_OUT bs=512 count=$SEC_CNT seek=300 conv=notrunc
+fi
