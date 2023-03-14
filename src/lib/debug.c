@@ -10,16 +10,16 @@ void panic_spin(char *filename,
                 const char *condition) {
     close_intr(); // close interrupt
     puts("\n!!!!! error !!!!!\n");
-    puts("filename:");
+    puts("filename: ");
     puts(filename);
     puts("\n");
-    puts("line:0x");
-    puts(line);
+    puts("line: ");
+    put_int(line);
     puts("\n");
-    puts("function:");
+    puts("function: ");
     puts((char *)func);
     puts("\n");
-    puts("condition:");
+    puts("condition: ");
     puts((char *)condition);
     puts("\n");
     while (1);
