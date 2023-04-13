@@ -40,9 +40,17 @@ int32_t copy_pcb_vaddrbitmap_stack0(struct task_struct* child_thread,
 
     child_thread->userprog_vaddr.vaddr_bitmap.bits = vaddr_btmp;
 
-    ASSERT(strlen(child_thread->name) < 11);
+    if (child_thread->pid == 4) {
+        strcpy(child_thread->name, "shell");
+    } else if (child_thread->parent_pid == 4) {
+        strcat(child_thread->name, "_fork");
+    } else {
+        printf("ppid: %d\n", child_thread->parent_pid);
+        PANIC("not handled here");
+    }
 
-    strcat(child_thread->name, "_fork");
+    ASSERT(strlen(child_thread->name) < 16);
+
     return 0;
 }
 
@@ -183,6 +191,7 @@ pid_t sys_fork( void ) {
         printk( "Copy from parent process fail\n" );
         return -1;
     }
+
     // schedule child thread
     ASSERT( !elem_find( &thread_ready_list, &child_thread->general_tag ) );
     list_append( &thread_ready_list, &child_thread->general_tag );

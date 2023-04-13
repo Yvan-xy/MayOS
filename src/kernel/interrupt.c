@@ -1,11 +1,18 @@
 #include <lib/printk.h>
 #include <kernel/interrupt.h>
 
+/* This array is actually an array of function pointers. We use
+*  this to handle custom IRQ handlers for a given IRQ */
+static void *irq_routines[16] = {
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0
+};
+
 /* This is a simple string array. It contains the message that
 *  corresponds to each and every exception. We get the correct
 *  message by accessing like:
 *  exception_message[interrupt_number] */
-unsigned char *exception_messages[] = {
+char *exception_messages[] = {
     "Division By Zero",
     "Debug",
     "Non Maskable Interrupt",

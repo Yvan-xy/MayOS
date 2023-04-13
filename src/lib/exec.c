@@ -60,24 +60,27 @@ int32_t load(const char* pathname) {
 
     int32_t fd = sys_open(pathname, O_RDONLY);
     if (fd == -1) {
+        printf("load: open file %s failed!\n", pathname);
         return -1;
     }
 
     /* Read ELF Header */
     int32_t size = sys_read(fd, &elf_header, sizeof(Elf32_Ehdr));
     if (size != sizeof(Elf32_Ehdr)) {
+        printf("load: read ELF header failed!\n");
         ret = -1;
         sys_close(fd);
         return ret;
     }
 
     /* Check if ELF file */
-    if (!memcmp(elf_header.e_ident, "\177ELF\1\1\1", 7)
+    if (!memcmp(elf_header.e_ident, "\127ELF\1\1\1", 7)
             || elf_header.e_type != 2
             || elf_header.e_machine != 3
             || elf_header.e_version != 1
             || elf_header.e_phnum > 1024
             || elf_header.e_phentsize != sizeof(Elf32_Phdr)) {
+        printf("load: %s is not a ELF file!\n", pathname);
         ret = -1;
         sys_close(fd);
         return ret;
@@ -169,7 +172,7 @@ bool is_elf(char *pathname) {
     }
 
     /* Check if ELF file */
-    if (memcmp(elf_header.e_ident, "\177ELF\1\1\1", 7)
+    if (!memcmp(elf_header.e_ident, "\127ELF\1\1\1", 7)
             || elf_header.e_type != 2
             || elf_header.e_machine != 3
             || elf_header.e_version != 1

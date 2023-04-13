@@ -170,7 +170,6 @@ void my_shell(void) {
                         exit(-1);
                     }
                     execv(argv[0], argv);
-                    printf("Exec done!\n");
                 }
                 // while(1);
             }

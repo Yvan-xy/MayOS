@@ -1,6 +1,7 @@
 #include <fs/fs.h>
 #include <fs/file.h>
 #include <lib/debug.h>
+#include <lib/printk.h>
 #include <kernel/thread.h>
 #include <kernel/interrupt.h>
 #define DEFAULT_SECS 1

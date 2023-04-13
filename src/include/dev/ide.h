@@ -9,11 +9,14 @@
 
 #define MAXIMUM_LOGIC_PARTS_NUM 8
 
+struct _disk;
+typedef struct _disk disk, DISK, *PDISK;
+
 // partition structure
 typedef struct _partition {
     uint32_t start_lba;          // Start Sector
     uint32_t sec_cnt;            // Sector Number
-    struct disk* my_disk;               // disk which contains this partition
+    PDISK my_disk;               // disk which contains this partition
     list_elem part_tag;          // tag of queue
     char name[ 8 ];              // partition name
     super_block* sb;             // partition's super_block

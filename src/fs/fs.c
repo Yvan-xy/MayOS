@@ -13,7 +13,7 @@ static bool mount_partition(list_elem* pelem, void* arg ) {
     PPARTITION part = elem2entry( PARTITION, part_tag, pelem );
     if ( !strcmp( part->name, part_name ) ) {
         cur_part = part;
-        struct disk* hd = cur_part->my_disk;
+        PDISK hd = cur_part->my_disk;
 
         // malloc sb_buf to store super block from disk
         PSUPER_BLOCK sb_buf = ( PSUPER_BLOCK )sys_malloc( SECTOR_SIZE );

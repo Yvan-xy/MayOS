@@ -4,6 +4,8 @@
 #include <lib/exec.h>
 #include <lib/debug.h>
 #include <lib/printk.h>
+#include <kernel/idt.h>
+#include <kernel/tss.h>
 #include <kernel/fork.h>
 #include <kernel/exit.h>
 #include <kernel/shell.h>

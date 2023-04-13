@@ -21,7 +21,7 @@ enum COLOR {
 
 extern void cls();
 extern void putch(unsigned char c);
-extern void puts(unsigned char *str);
+extern void puts(char *str);
 extern void put_int(uint32_t num);
 extern void settextcolor(unsigned char forecolor, unsigned char backcolor);
 extern void init_video();

@@ -16,7 +16,7 @@ CFLAGS="-Wall -fno-pie -c -fno-stack-protector -nostdinc -fno-builtin -W -fomit-
 LIB="../include/"
 OBJS="../build/user/*.o"
 DD_IN=$BIN
-DD_OUT="../../hd60M.img"
+DD_OUT="../../hd.img"
 
 nasm -f elf ./start.s -o ./start.o
 ar rcs libMay.a $OBJS start.o

@@ -2,7 +2,7 @@
 #include <system.h>
 #include <lib/debug.h>
 
-unsigned char *memcpy(unsigned char *dest, const unsigned char *src, int count) {
+void *memcpy(void *dest, const void *src, int count) {
     ASSERT((dest != NULL) && (src != NULL));
     const char *sp = (const char *)src;
     char *dp = (char *)dest;
@@ -10,7 +10,7 @@ unsigned char *memcpy(unsigned char *dest, const unsigned char *src, int count) 
     return dest;
 }
 
-unsigned char *memset(unsigned char *dest, unsigned char val, int count) {
+void *memset(void *dest, unsigned char val, int count) {
     ASSERT(dest != NULL);
     char *temp = (char *)dest;
     for( ; count != 0; count--) *temp++ = val;

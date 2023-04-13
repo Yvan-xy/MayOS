@@ -63,11 +63,11 @@ uint32_t write(int32_t fd, const void* buf, uint32_t count) {
 }
 
 pid_t fork(void) {
-    return _syscall0(SYS_FORK);
+    _syscall0(SYS_FORK);
 }
 
 void clear(void) {
-    return _syscall0(SYS_CLEAR);
+    _syscall0(SYS_CLEAR);
 }
 
 uint32_t read(int fd, void *buf, uint32_t count) {
@@ -115,7 +115,7 @@ struct _DIR_ENTRY* readdir( PDIR dir ) {
 }
 
 void rewinddir( PDIR dir ) {
-    return _syscall1(SYS_REWINDDIR, dir);
+    _syscall1(SYS_REWINDDIR, dir);
 }
 
 int32_t rmdir( const char* pathname ) {
@@ -131,7 +131,7 @@ int32_t stat( const char* path, PSTAT buf ) {
 }
 
 void ps(void) {
-    return _syscall0(SYS_PS);
+    _syscall0(SYS_PS);
 }
 
 int32_t execv(const char* path, const char* argv[]) {
